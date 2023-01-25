@@ -15,6 +15,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.run/
 
 # External tool builders
 .externalToolBuilders/
@@ -205,7 +206,8 @@ replay_pid*
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
