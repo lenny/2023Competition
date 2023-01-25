@@ -5,7 +5,6 @@
 
 package com.team871;
 
-import com.team871.commands.DriveCommand;
 import com.team871.config.IRobot;
 import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.subsystems.DriveTrain;
@@ -24,13 +23,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer
 {
-    // The robot's subsystems and commands are defined here...
-    
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-//    private final CommandXboxController driverController =
-//            new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
     private final DriveTrain drivetrain;
     private final IRobot config;
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
@@ -43,7 +38,7 @@ public class RobotContainer
         // Configure the trigger bindings
         configureBindings();
 
-        CommandScheduler.getInstance().setDefaultCommand(drivetrain, new DriveCommand(drivetrain, config.getXboxController()));
+        CommandScheduler.getInstance().setDefaultCommand(drivetrain, drivetrain.driveCommand(config.getXboxController().getHID()));
     }
     
     
@@ -58,14 +53,8 @@ public class RobotContainer
      */
     private void configureBindings()
     {
+config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
 
-//        // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-//        new Trigger(exampleSubsystem::exampleCondition)
-//                .onTrue(new ExampleCommand(exampleSubsystem));
-//
-//        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-//        // cancelling on release.
-//        driverController.b().whileTrue(exampleSubsystem.exampleMethodCommand());
     }
     
     

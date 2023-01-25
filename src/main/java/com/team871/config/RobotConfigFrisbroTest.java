@@ -2,8 +2,9 @@ package com.team871.config;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotConfigFrisbroTest implements IRobot {
     private final WPI_TalonSRX frontLeft;
@@ -12,7 +13,9 @@ public class RobotConfigFrisbroTest implements IRobot {
     private final WPI_TalonSRX rearRight;
     private final AHRS gyro;
 
-    private final XboxController controller;
+    private final CommandXboxController controller;
+
+    private final PIDController balancePID;
 
 
     public RobotConfigFrisbroTest() {
@@ -31,7 +34,9 @@ public class RobotConfigFrisbroTest implements IRobot {
 
         gyro = new AHRS();
 
-        controller = new XboxController(0);
+        balancePID = new PIDController(0.03, 0.0, 0.0001);
+
+        controller = new CommandXboxController(0);
     }
     @Override
     public MotorController getFrontLeftMotor() {
@@ -59,7 +64,12 @@ public class RobotConfigFrisbroTest implements IRobot {
     }
 
     @Override
-    public XboxController getXboxController() {
+    public CommandXboxController getXboxController() {
         return controller;
+    }
+
+    @Override
+    public PIDController getBalancePID() {
+        return balancePID;
     }
 }
