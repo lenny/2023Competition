@@ -1,4 +1,3 @@
 package com.team871.subsystems;
 
-public class Claw {
-}
+public class Claw {}
