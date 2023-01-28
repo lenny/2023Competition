@@ -6,13 +6,13 @@
 package com.team871;
 
 import com.team871.config.IRobot;
-import com.team871.config.RobotConfigFrisbroTest;
+// import com.team871.config.RobotConfigFrisbroTest;
+import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,50 +21,52 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DriveTrain drivetrain;
-    private final IRobot config;
+  private final DriveTrain drivetrain;
+  private final IRobot config;
 
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
+    config = new RobotConfigScorpion();
 
-        config = new RobotConfigFrisbroTest();
+    drivetrain =
+        new DriveTrain(
+            config.getFrontLeftMotor(),
+            config.getFrontRightMotor(),
+            config.getRearLeftMotor(),
+            config.getRearRightMotor());
 
-        drivetrain = new DriveTrain(config.getFrontLeftMotor(), config.getFrontRightMotor(), config.getRearLeftMotor(), config.getRearRightMotor());
+    // Configure the trigger bindings
+    configureBindings();
 
-        // Configure the trigger bindings
-        configureBindings();
+    CommandScheduler.getInstance()
+        .setDefaultCommand(
+            drivetrain, drivetrain.driveCommand(config.getXboxController().getHID()));
+  }
 
-        CommandScheduler.getInstance().setDefaultCommand(drivetrain, drivetrain.driveCommand(config.getXboxController().getHID()));
-    }
+  /**
+   * Use this method to define your trigger->command mappings. Triggers can be created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * predicate, or via the named factories in {@link
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * joysticks}.
+   */
+  private void configureBindings() {
+    config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
+    //        config.getXboxController().a().onTrue(
+    //                drivetrain.driveDuration(5, 5));
+  }
 
-
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-        config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
-        config.getXboxController().a().onTrue(
-                drivetrain.driveDuration(5, 5));
-    }
-
-
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        // An example command will be run in autonomous
-//        return Autos.exampleAuto(exampleSubsystem);
-        return null;
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    // An example command will be run in autonomous
+    //        return Autos.exampleAuto(exampleSubsystem);
+    return null;
+  }
 }
