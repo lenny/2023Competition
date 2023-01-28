@@ -117,6 +117,8 @@ idea {
 }
 
 // From: https://docs.wpilib.org/en/stable/docs/software/advanced-gradlerio/code-formatting.html
+// Autoformat: ./gradlew spotlessApply 
+// Check format: ./gradlew spotlessCheck
 spotless {
     java {
         target fileTree('.') {
