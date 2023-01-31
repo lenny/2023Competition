@@ -5,7 +5,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotConfigScorpion implements IRobot {
@@ -41,7 +40,6 @@ public class RobotConfigScorpion implements IRobot {
     rearRight.setInverted(false);
 
     gyro = new AHRS();
-
 
     controller = new CommandXboxController(0);
 

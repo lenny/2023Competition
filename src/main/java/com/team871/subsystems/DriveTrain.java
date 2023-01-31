@@ -28,8 +28,7 @@ public class DriveTrain extends SubsystemBase {
       MotorController frontRightMotor,
       MotorController backLeftMotor,
       MotorController backRightMotor,
-      AHRS gyro
-  ) {
+      AHRS gyro) {
     super();
     this.frontRightMotor = frontRightMotor;
     this.frontLeftMotor = frontLeftMotor;
@@ -37,7 +36,6 @@ public class DriveTrain extends SubsystemBase {
     this.backLeftMotor = backLeftMotor;
     mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
-
   }
 
   private void driveMecanum(double xValue, double yValue, double zValue) {
@@ -49,9 +47,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase defaultCommand(XboxController xboxController) {
-    return run(()->{
-      driveMecanum(xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
-    });
+    return run(
+        () -> {
+          driveMecanum(
+              xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
+        });
   }
 
   public CommandBase balanceCommand(AHRS gyro) {
@@ -61,25 +61,31 @@ public class DriveTrain extends SubsystemBase {
 
     PIDCommand command =
         new PIDCommand(
-            balancePID, gyro::getRoll, 0, output -> {
+            balancePID,
+            gyro::getRoll,
+            0,
+            output -> {
               double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
-             SmartDashboard.putNumber("pitchPIDOutput", output);
-             SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
-              driveMecanum(output,0,rotationPIDOutput);
-        }, this);
+              SmartDashboard.putNumber("pitchPIDOutput", output);
+              SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
+              driveMecanum(output, 0, rotationPIDOutput);
+            },
+            this);
     return command;
   }
 
   public CommandBase disableMotors() {
-    return runOnce(() -> {
-     motorsEnabled = false;
-    });
+    return runOnce(
+        () -> {
+          motorsEnabled = false;
+        });
   }
 
   public CommandBase enableMotors() {
-    return runOnce(() -> {
-      motorsEnabled = true;
-    });
+    return runOnce(
+        () -> {
+          motorsEnabled = true;
+        });
   }
 
   public CommandBase driveForwardCommand(double speed) {
@@ -97,7 +103,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase resetGyro() {
-    return runOnce(()-> gyro.reset());
+    return runOnce(() -> gyro.reset());
   }
 
   @Override
@@ -106,6 +112,5 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("gyroRoll", gyro.getRoll());
     SmartDashboard.putNumber("gyroYaw", gyro.getYaw());
     SmartDashboard.putBoolean("motorStatus", motorsEnabled);
-
   }
 }

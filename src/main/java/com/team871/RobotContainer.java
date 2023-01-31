@@ -5,21 +5,15 @@
 
 package com.team871;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
-import com.team871.config.RobotConfigFrisbro;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import java.util.Collections;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,7 +28,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-//    config = new RobotConfigFrisbro();
+    //    config = new RobotConfigFrisbro();
     config = new RobotConfigScorpion();
 
     drivetrain =
@@ -43,7 +37,7 @@ public class RobotContainer {
             config.getFrontRightMotor(),
             config.getRearLeftMotor(),
             config.getRearRightMotor(),
-                config.gyro());
+            config.gyro());
 
     SmartDashboard.putData("drivetrain", drivetrain);
     SmartDashboard.putData("disableMotorsCommand", drivetrain.disableMotors());
@@ -58,7 +52,7 @@ public class RobotContainer {
         .setDefaultCommand(
             drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
 
-    //CommandScheduler.getInstance().schedule(gyroReportCommand().repeatedly());
+    // CommandScheduler.getInstance().schedule(gyroReportCommand().repeatedly());
   }
 
   /**
@@ -90,11 +84,10 @@ public class RobotContainer {
     return null;
   }
 
-
-//  public CommandBase gyroReportCommand() {
-//    AHRS gyro = config.gyro();
-//    return Commands.run(() -> {
-//
-//    }, new Subsystem[] {} );
-//  }
+  //  public CommandBase gyroReportCommand() {
+  //    AHRS gyro = config.gyro();
+  //    return Commands.run(() -> {
+  //
+  //    }, new Subsystem[] {} );
+  //  }
 }
