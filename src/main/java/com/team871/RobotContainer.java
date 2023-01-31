@@ -8,6 +8,7 @@ package com.team871;
 import com.kauailabs.navx.frc.AHRS;
 import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
+import com.team871.config.RobotConfigFrisbro;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,6 +34,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+//    config = new RobotConfigFrisbro();
     config = new RobotConfigScorpion();
 
     drivetrain =
@@ -42,6 +44,12 @@ public class RobotContainer {
             config.getRearLeftMotor(),
             config.getRearRightMotor(),
                 config.gyro());
+
+    SmartDashboard.putData("drivetrain", drivetrain);
+    SmartDashboard.putData("disableMotorsCommand", drivetrain.disableMotors());
+    SmartDashboard.putData("enableMotorsCommand", drivetrain.enableMotors());
+    SmartDashboard.putData("balanceCommand", drivetrain.balanceCommand(config.gyro()));
+    SmartDashboard.putData("resetGyro", drivetrain.resetGyro());
 
     // Configure the trigger bindings
     configureBindings();
