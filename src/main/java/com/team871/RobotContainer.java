@@ -51,8 +51,6 @@ public class RobotContainer {
     CommandScheduler.getInstance()
         .setDefaultCommand(
             drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
-
-    // CommandScheduler.getInstance().schedule(gyroReportCommand().repeatedly());
   }
 
   /**
@@ -83,11 +81,4 @@ public class RobotContainer {
     //        return Autos.exampleAuto(exampleSubsystem);
     return null;
   }
-
-  //  public CommandBase gyroReportCommand() {
-  //    AHRS gyro = config.gyro();
-  //    return Commands.run(() -> {
-  //
-  //    }, new Subsystem[] {} );
-  //  }
 }
