@@ -9,6 +9,7 @@ import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,6 +28,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    //    config = new RobotConfigFrisbro();
     config = new RobotConfigScorpion();
 
     drivetrain =
@@ -34,14 +36,21 @@ public class RobotContainer {
             config.getFrontLeftMotor(),
             config.getFrontRightMotor(),
             config.getRearLeftMotor(),
-            config.getRearRightMotor());
+            config.getRearRightMotor(),
+            config.gyro());
+
+    SmartDashboard.putData("drivetrain", drivetrain);
+    SmartDashboard.putData("disableMotorsCommand", drivetrain.disableMotors());
+    SmartDashboard.putData("enableMotorsCommand", drivetrain.enableMotors());
+    SmartDashboard.putData("balanceCommand", drivetrain.balanceCommand(config.gyro()));
+    SmartDashboard.putData("resetGyro", drivetrain.resetGyro());
 
     // Configure the trigger bindings
     configureBindings();
 
     CommandScheduler.getInstance()
         .setDefaultCommand(
-            drivetrain, drivetrain.driveCommand(config.getXboxController().getHID()));
+            drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
   }
 
   /**
@@ -54,9 +63,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    System.out.println("configure bindings");
+
     config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
     //        config.getXboxController().a().onTrue(
     //                drivetrain.driveDuration(5, 5));
+    config.getXboxController().leftBumper().whileTrue(drivetrain.resetGyro());
   }
 
   /**

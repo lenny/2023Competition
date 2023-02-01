@@ -40,7 +40,6 @@ public class RobotConfigScorpion implements IRobot {
     rearRight.setInverted(false);
 
     gyro = new AHRS();
-    //       AHR SmartDashboard.putData("gyro", gyro.getPitch());
 
     controller = new CommandXboxController(0);
 
