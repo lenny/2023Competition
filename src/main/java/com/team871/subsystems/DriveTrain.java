@@ -22,6 +22,8 @@ public class DriveTrain extends SubsystemBase {
   private final MotorController backRightMotor;
   private final AHRS gyro;
   private boolean motorsEnabled = true;
+  private PIDController balancePID;
+  private PIDController rotationPID;
 
   public DriveTrain(
       MotorController frontLeftMotor,
@@ -36,6 +38,12 @@ public class DriveTrain extends SubsystemBase {
     this.backLeftMotor = backLeftMotor;
     mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
+
+    balancePID = new PIDController(0.005, 0, 0);
+    SmartDashboard.putData("BalancePID", balancePID);
+    rotationPID = new PIDController(0.02, 0, 0);
+    SmartDashboard.putData("RotationPID", rotationPID);
+    rotationPID.setSetpoint(0);
   }
 
   private void driveMecanum(double xValue, double yValue, double zValue) {
@@ -50,28 +58,24 @@ public class DriveTrain extends SubsystemBase {
     return run(
         () -> {
           driveMecanum(
-              xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
+              -xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
         });
   }
 
   public CommandBase balanceCommand(AHRS gyro) {
-    PIDController balancePID = new PIDController(0.033, 0, 0.000009);
-    PIDController rotationPID = new PIDController(0.00277, 0, 0);
-    rotationPID.setSetpoint(0);
-
-    PIDCommand command =
-        new PIDCommand(
-            balancePID,
-            gyro::getRoll,
-            0,
-            output -> {
-              double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
-              SmartDashboard.putNumber("pitchPIDOutput", output);
-              SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
-              driveMecanum(output, 0, rotationPIDOutput);
-            },
-            this);
-    return command;
+    balancePID.reset();
+    rotationPID.reset();
+    return new PIDCommand(
+        balancePID,
+        gyro::getRoll,
+        0,
+        output -> {
+          double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
+          SmartDashboard.putNumber("pitchPIDOutput", output);
+          SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
+          driveMecanum(output, 0, rotationPIDOutput);
+        },
+        this);
   }
 
   public CommandBase disableMotors() {
