@@ -22,22 +22,22 @@ public class RobotConfigScorpion implements IRobot {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
     frontLeft = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
     frontLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    frontLeft.setInverted(true);
+    frontLeft.setInverted(false);
 
     /* sets front right motor to CanSparkMax motor controller with device id 2 */
     frontRight = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
     frontRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    frontRight.setInverted(false);
+    frontRight.setInverted(true);
 
     /* sets rear left motor to CanSparkMax motor controller with device id 3 */
     rearLeft = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
     rearLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rearLeft.setInverted(true);
+    rearLeft.setInverted(false);
 
     /* sets rear right motor to CanSparkMax motor controller with device id 4 */
     rearRight = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
     rearRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rearRight.setInverted(false);
+    rearRight.setInverted(true);
 
     gyro = new AHRS();
 
