@@ -114,7 +114,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("mecanumY", yValue);
     SmartDashboard.putNumber("mecanumZ", zValue);
     SmartDashboard.putBoolean("motorStatus", motorsEnabled);
-    if (motorsEnabled) mecanum.driveCartesian(xValue, yValue, zValue);
+    if (motorsEnabled) {
+      mecanum.driveCartesian(xValue, yValue, zValue);
+    } else {
+      mecanum.driveCartesian(0, 0, 0);
+    }
   }
 
   public CommandBase defaultCommand(XboxController xboxController) {
