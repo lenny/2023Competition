@@ -64,13 +64,12 @@ public class DriveTrain extends SubsystemBase {
   private static final double ROTATION_PID_KD = 0;
 
   private final MecanumDrive mecanum;
-
   private final Gyro gyro;
-  private boolean motorsEnabled = true;
   private final PIDController balancePID;
   private final PIDController rotationPID;
-
   private final DriveDurationInput driveDurationInput;
+
+  private boolean motorsEnabled = true;
 
   public DriveTrain(
       MotorController frontLeftMotor,
@@ -85,7 +84,6 @@ public class DriveTrain extends SubsystemBase {
     balancePID = new PIDController(BALANCE_PID_KP, BALANCE_PID_KI, BALANCE_PID_KD);
 
     rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
-
     rotationPID.setSetpoint(0);
 
     driveDurationInput = new DriveDurationInput();
