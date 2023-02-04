@@ -52,6 +52,10 @@ public class RobotContainer {
     CommandScheduler.getInstance()
         .setDefaultCommand(
             drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
+
+    // Suppress "Joystick Button 2 on port 0 not available, check if controller is plugged in"
+    // flooding in console
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   /**
