@@ -40,6 +40,8 @@ public class RobotContainer {
             config.gyro());
 
     SmartDashboard.putData("drivetrain", drivetrain);
+    SmartDashboard.putData("Gyro", config.gyro());
+    SmartDashboard.putData("DriveDurationInput", drivetrain.getDriveDurationInput());
 
     // Configure the trigger bindings
     configureBindings();
@@ -61,9 +63,9 @@ public class RobotContainer {
   private void configureBindings() {
     System.out.println("configure bindings");
 
-    config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
-    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
-    config.getXboxController().leftBumper().whileTrue(drivetrain.resetGyro());
+    config.getXboxController().b().whileTrue(drivetrain.balanceCommand());
+    //    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
+    config.getXboxController().leftBumper().whileTrue(config.gyro().resetGyroCommand());
   }
 
   /**
