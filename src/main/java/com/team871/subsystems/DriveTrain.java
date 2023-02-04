@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
 
-  public static class DriveDurationInput implements Sendable {
+  private static class DriveDurationInput implements Sendable {
     private double speed = 0;
     private double duration = 0;
 
@@ -45,8 +45,8 @@ public class DriveTrain extends SubsystemBase {
       builder.setSmartDashboardType("DriveDurationInput");
       builder.addDoubleProperty("speed", this::getSpeed, this::setSpeed);
       builder.addDoubleProperty("duration", this::getDuration, this::setDuration);
-      //      builder.setActuator(true);
-      //      builder.setSafeState(this::reset);
+      builder.setActuator(true);
+      builder.setSafeState(this::reset);
     }
 
     @Override
@@ -159,17 +159,18 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase driveForwardCommand(double speed) {
-    return runOnce(
+    return run(
         () -> {
           driveMecanum(speed, 0, 0);
         });
   }
 
   public CommandBase driveDurationCommand() {
-
-    return new ProxyCommand( ()->
-      driveForwardCommand(driveDurationInput.speed)
-        .withTimeout(driveDurationInput.duration)
-        .andThen(driveForwardCommand(0)));
+    return new ProxyCommand(
+            () -> {
+              return driveForwardCommand(driveDurationInput.speed)
+                  .withTimeout(driveDurationInput.duration);
+            })
+        .andThen(driveForwardCommand(0));
   }
 }
