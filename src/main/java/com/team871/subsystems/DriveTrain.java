@@ -2,6 +2,7 @@ package com.team871.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -25,6 +26,17 @@ public class DriveTrain extends SubsystemBase {
   private PIDController balancePID;
   private PIDController rotationPID;
 
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    SmartDashboard.putData("disableMotorsCommand", disableMotors());
+    SmartDashboard.putData("enableMotorsCommand", enableMotors());
+    SmartDashboard.putData("balanceCommand", balanceCommand(gyro));
+    SmartDashboard.putData("resetGyro", resetGyro());
+    SmartDashboard.putData("BalancePID", balancePID);
+    SmartDashboard.putData("RotationPID", rotationPID);
+  }
+
   public DriveTrain(
       MotorController frontLeftMotor,
       MotorController frontRightMotor,
@@ -40,9 +52,9 @@ public class DriveTrain extends SubsystemBase {
     this.gyro = gyro;
 
     balancePID = new PIDController(0.005, 0, 0);
-    SmartDashboard.putData("BalancePID", balancePID);
+
     rotationPID = new PIDController(0.02, 0, 0);
-    SmartDashboard.putData("RotationPID", rotationPID);
+
     rotationPID.setSetpoint(0);
   }
 
@@ -95,15 +107,12 @@ public class DriveTrain extends SubsystemBase {
   public CommandBase driveForwardCommand(double speed) {
     return runOnce(
         () -> {
-          frontLeftMotor.set(speed);
-          frontRightMotor.set(speed);
-          backLeftMotor.set(speed);
-          backRightMotor.set(speed);
+          driveMecanum(speed, 0, 0);
         });
   }
 
-  public CommandBase driveDuration(double speed, double millis) {
-    return driveForwardCommand(5).withTimeout(5).andThen(driveForwardCommand(0));
+  public CommandBase driveDuration(double speed, double seconds) {
+    return driveForwardCommand(speed).withTimeout(seconds).andThen(driveForwardCommand(0));
   }
 
   public CommandBase resetGyro() {
