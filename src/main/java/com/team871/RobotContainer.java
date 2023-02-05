@@ -12,7 +12,7 @@ import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -40,18 +40,12 @@ public class RobotContainer {
             config.getRearRightMotor(),
             config.gyro());
 
-    SmartDashboard.putData("drivetrain", drivetrain);
+    SmartDashboard.putData("Drivetrain", drivetrain);
     SmartDashboard.putData("Gyro", config.gyro());
     SmartDashboard.putData("DriveDurationInput", drivetrain.getDriveDurationInput());
 
     // Configure the trigger bindings
     configureBindings();
-
-    DriverStation.silenceJoystickConnectionWarning(true);
-
-    CommandScheduler.getInstance()
-        .setDefaultCommand(
-            drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
 
     // Suppress "Joystick Button 2 on port 0 not available, check if controller is plugged in"
     // flooding in console
@@ -70,9 +64,15 @@ public class RobotContainer {
   private void configureBindings() {
     System.out.println("configure bindings");
 
-    config.getXboxController().b().whileTrue(drivetrain.balanceCommand());
-    //    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
-    config.getXboxController().leftBumper().whileTrue(config.gyro().resetGyroCommand());
+    CommandXboxController xboxController = config.getXboxController();
+    xboxController
+        .leftStick()
+        .or(xboxController.rightStick())
+        .whileTrue(
+            drivetrain.driveCommand(
+                xboxController.getLeftX(), xboxController.getLeftY(), xboxController.getRightX()));
+    xboxController.b().whileTrue(drivetrain.balanceCommand());
+    xboxController.leftBumper().whileTrue(config.gyro().resetGyroCommand());
   }
 
   /**
@@ -81,8 +81,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    //        return Autos.exampleAuto(exampleSubsystem);
-    return null;
+    return Commands.print("No autonomous command configured");
   }
 }
