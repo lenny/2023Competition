@@ -9,6 +9,7 @@ import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -45,6 +46,8 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     configureBindings();
+
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     CommandScheduler.getInstance()
         .setDefaultCommand(

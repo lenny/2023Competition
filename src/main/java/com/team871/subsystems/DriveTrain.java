@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
@@ -64,13 +65,6 @@ public class DriveTrain extends SubsystemBase {
 
   private final MecanumDrive mecanum;
 
-  private final MotorController frontLeftMotor;
-
-  private final MotorController backLeftMotor;
-
-  private final MotorController frontRightMotor;
-
-  private final MotorController backRightMotor;
   private final Gyro gyro;
   private boolean motorsEnabled = true;
   private final PIDController balancePID;
@@ -85,10 +79,6 @@ public class DriveTrain extends SubsystemBase {
       MotorController backRightMotor,
       Gyro gyro) {
     super();
-    this.frontRightMotor = frontRightMotor;
-    this.frontLeftMotor = frontLeftMotor;
-    this.backRightMotor = backRightMotor;
-    this.backLeftMotor = backLeftMotor;
     mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
 
@@ -177,8 +167,9 @@ public class DriveTrain extends SubsystemBase {
 
   public CommandBase driveDurationCommand() {
 
-    return driveForwardCommand(driveDurationInput.speed)
+    return new ProxyCommand( ()->
+      driveForwardCommand(driveDurationInput.speed)
         .withTimeout(driveDurationInput.duration)
-        .andThen(driveForwardCommand(0));
+        .andThen(driveForwardCommand(0)));
   }
 }
