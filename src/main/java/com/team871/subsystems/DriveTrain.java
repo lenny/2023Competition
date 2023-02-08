@@ -4,10 +4,10 @@ import com.team871.config.Gyro;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -87,8 +87,6 @@ public class DriveTrain extends SubsystemBase {
     rotationPID.setSetpoint(0);
 
     driveDurationInput = new DriveDurationInput();
-
-    setDefaultCommand(idleCommand());
   }
 
   public DriveDurationInput getDriveDurationInput() {
@@ -123,6 +121,14 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
+  public CommandBase defaultCommand(XboxController xboxController) {
+    return run(
+        () -> {
+          driveMecanum(
+              -xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
+        });
+  }
+
   public CommandBase balanceCommand() {
     balancePID.reset();
     rotationPID.reset();
@@ -141,30 +147,32 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase disableMotors() {
-    return runOnce(() -> motorsEnabled = false);
+    return runOnce(
+        () -> {
+          motorsEnabled = false;
+        });
   }
 
   public CommandBase enableMotors() {
-    return runOnce(() -> motorsEnabled = true);
+    return runOnce(
+        () -> {
+          motorsEnabled = true;
+        });
   }
 
   public CommandBase driveForwardCommand(double speed) {
-    return run(() -> driveMecanum(speed, 0, 0));
+    return run(
+        () -> {
+          driveMecanum(speed, 0, 0);
+        });
   }
 
   public CommandBase driveDurationCommand() {
     return new ProxyCommand(
-            () ->
-                driveForwardCommand(driveDurationInput.speed)
-                    .withTimeout(driveDurationInput.duration))
-        .andThen(idleCommand());
-  }
-
-  public Command driveCommand(double leftX, double leftY, double rightX) {
-    return run(() -> driveMecanum(leftX, leftY, rightX));
-  }
-
-  public Command idleCommand() {
-    return run(() -> driveMecanum(0, 0, 0));
+            () -> {
+              return driveForwardCommand(driveDurationInput.speed)
+                  .withTimeout(driveDurationInput.duration);
+            })
+        .andThen(driveForwardCommand(0));
   }
 }
