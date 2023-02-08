@@ -1,6 +1,5 @@
 package com.team871.config;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,11 +11,12 @@ public class RobotConfigScorpion implements IRobot {
   private final CANSparkMax frontRight;
   private final CANSparkMax rearLeft;
   private final CANSparkMax rearRight;
-  private final AHRS gyro;
 
   private final CommandXboxController controller;
 
   private final PIDController balancePID;
+
+  private final Gyro gyro;
 
   public RobotConfigScorpion() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -39,11 +39,11 @@ public class RobotConfigScorpion implements IRobot {
     rearRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rearRight.setInverted(true);
 
-    gyro = new AHRS();
-
     controller = new CommandXboxController(0);
 
     balancePID = new PIDController(0.03, 0.0, 0.0001);
+
+    gyro = new Gyro();
   }
 
   @Override
@@ -67,7 +67,7 @@ public class RobotConfigScorpion implements IRobot {
   }
 
   @Override
-  public AHRS gyro() {
+  public Gyro gyro() {
     return gyro;
   }
 

@@ -9,6 +9,7 @@ import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -40,13 +41,21 @@ public class RobotContainer {
             config.gyro());
 
     SmartDashboard.putData("drivetrain", drivetrain);
+    SmartDashboard.putData("Gyro", config.gyro());
+    SmartDashboard.putData("DriveDurationInput", drivetrain.getDriveDurationInput());
 
     // Configure the trigger bindings
     configureBindings();
 
+    DriverStation.silenceJoystickConnectionWarning(true);
+
     CommandScheduler.getInstance()
         .setDefaultCommand(
             drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
+
+    // Suppress "Joystick Button 2 on port 0 not available, check if controller is plugged in"
+    // flooding in console
+    DriverStation.silenceJoystickConnectionWarning(true);
   }
 
   /**
@@ -61,9 +70,9 @@ public class RobotContainer {
   private void configureBindings() {
     System.out.println("configure bindings");
 
-    config.getXboxController().b().whileTrue(drivetrain.balanceCommand(config.gyro()));
-    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
-    config.getXboxController().leftBumper().whileTrue(drivetrain.resetGyro());
+    config.getXboxController().b().whileTrue(drivetrain.balanceCommand());
+    //    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
+    config.getXboxController().leftBumper().whileTrue(config.gyro().resetGyroCommand());
   }
 
   /**
