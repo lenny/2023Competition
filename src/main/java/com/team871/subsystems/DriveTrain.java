@@ -1,5 +1,6 @@
 package com.team871.subsystems;
 
+import com.fasterxml.jackson.core.io.OutputDecorator;
 import com.team871.config.IGyro;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
@@ -15,9 +16,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
 
-  private static class DriveDurationInput implements Sendable {
+  private static class TestInputs implements Sendable {
     private double speed = 0;
     private double duration = 0;
+    private double degrees = 0;
+
+    public double getDegrees() {
+      return degrees;
+    }
+
+    public void setDegrees(double degrees) {
+      this.degrees = degrees;
+    }
 
     public double getSpeed() {
       return speed;
@@ -45,8 +55,10 @@ public class DriveTrain extends SubsystemBase {
       builder.setSmartDashboardType("DriveDurationInput");
       builder.addDoubleProperty("speed", this::getSpeed, this::setSpeed);
       builder.addDoubleProperty("duration", this::getDuration, this::setDuration);
+      builder.addDoubleProperty("degrees", this::getDegrees, this::setDegrees);
       builder.setActuator(true);
       builder.setSafeState(this::reset);
+  
     }
 
     @Override
@@ -67,7 +79,7 @@ public class DriveTrain extends SubsystemBase {
   private final IGyro gyro;
   private final PIDController balancePID;
   private final PIDController rotationPID;
-  private final DriveDurationInput driveDurationInput;
+  private final TestInputs testInputs;
 
   private boolean motorsEnabled = true;
 
@@ -86,11 +98,11 @@ public class DriveTrain extends SubsystemBase {
     rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
     rotationPID.setSetpoint(0);
 
-    driveDurationInput = new DriveDurationInput();
+    testInputs = new TestInputs();
   }
 
-  public DriveDurationInput getDriveDurationInput() {
-    return driveDurationInput;
+  public TestInputs getTestInputs() {
+    return testInputs;
   }
 
   @Override
@@ -102,6 +114,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putData("BalancePID", balancePID);
     SmartDashboard.putData("RotationPID", rotationPID);
     SmartDashboard.putData("DriveDurationCommand", driveDurationCommand());
+    SmartDashboard.putData("RotateCommand", rotateCommand());
     builder.addBooleanProperty("MotorStatus", this::isMotorsEnabled, null);
   }
 
@@ -167,10 +180,27 @@ public class DriveTrain extends SubsystemBase {
   public CommandBase driveDurationCommand() {
     return new ProxyCommand(
         () -> {
-          return driveForwardCommand(driveDurationInput.speed)
-              .withTimeout(driveDurationInput.duration)
+          return driveForwardCommand(testInputs.speed)
+              .withTimeout(testInputs.duration)
               .andThen(driveForwardCommand(0).withTimeout(2))
               .andThen(driveForwardCommand(0));
         });
+  }
+
+  public CommandBase rotateCommand(double degrees) {
+    rotationPID.reset();
+    return new PIDCommand(
+      rotationPID, 
+      gyro::getYaw,
+      degrees,
+      output -> driveMecanum(0, 0, output),
+      this);
+
+  }
+
+  public CommandBase rotateCommand() {
+    rotationPID.reset();
+    return new ProxyCommand(()->rotateCommand(testInputs.degrees));
+
   }
 }

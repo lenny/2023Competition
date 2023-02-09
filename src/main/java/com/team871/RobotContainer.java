@@ -48,7 +48,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("drivetrain", drivetrain);
     SmartDashboard.putData("Gyro", gyro);
-    SmartDashboard.putData("DriveDurationInput", drivetrain.getDriveDurationInput());
+    SmartDashboard.putData("DriveDurationInput", drivetrain.getTestInputs());
 
     // Configure the trigger bindings
     configureBindings();
