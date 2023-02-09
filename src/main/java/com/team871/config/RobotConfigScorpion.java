@@ -3,6 +3,7 @@ package com.team871.config;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -16,7 +17,7 @@ public class RobotConfigScorpion implements IRobot {
 
   private final PIDController balancePID;
 
-  private final Gyro gyro;
+  private final IGyro gyro;
 
   public RobotConfigScorpion() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -43,7 +44,7 @@ public class RobotConfigScorpion implements IRobot {
 
     balancePID = new PIDController(0.03, 0.0, 0.0001);
 
-    gyro = new Gyro();
+    gyro = RobotBase.isReal() ? new Gyro() : new SimulationGyro();
   }
 
   @Override
@@ -67,7 +68,7 @@ public class RobotConfigScorpion implements IRobot {
   }
 
   @Override
-  public Gyro gyro() {
+  public IGyro gyro() {
     return gyro;
   }
 

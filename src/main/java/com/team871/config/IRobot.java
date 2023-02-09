@@ -28,7 +28,7 @@ public interface IRobot {
   /**
    * @return gyro
    */
-  Gyro gyro();
+  IGyro gyro();
 
   CommandXboxController getXboxController();
 
