@@ -147,10 +147,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase disableMotors() {
-    return runOnce(
-        () -> {
-          motorsEnabled = false;
-        });
+    return runOnce(() -> motorsEnabled = false);
   }
 
   public CommandBase enableMotors() {
