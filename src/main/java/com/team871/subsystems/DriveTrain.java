@@ -1,6 +1,5 @@
 package com.team871.subsystems;
 
-import com.fasterxml.jackson.core.io.OutputDecorator;
 import com.team871.config.IGyro;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
@@ -58,7 +57,6 @@ public class DriveTrain extends SubsystemBase {
       builder.addDoubleProperty("degrees", this::getDegrees, this::setDegrees);
       builder.setActuator(true);
       builder.setSafeState(this::reset);
-  
     }
 
     @Override
@@ -190,17 +188,11 @@ public class DriveTrain extends SubsystemBase {
   public CommandBase rotateCommand(double degrees) {
     rotationPID.reset();
     return new PIDCommand(
-      rotationPID, 
-      gyro::getYaw,
-      degrees,
-      output -> driveMecanum(0, 0, output),
-      this);
-
+        rotationPID, gyro::getYaw, degrees, output -> driveMecanum(0, 0, output), this);
   }
 
   public CommandBase rotateCommand() {
     rotationPID.reset();
-    return new ProxyCommand(()->rotateCommand(testInputs.degrees));
-
+    return new ProxyCommand(() -> rotateCommand(testInputs.degrees));
   }
 }
