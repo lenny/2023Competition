@@ -44,7 +44,7 @@ public class RobotConfigScorpion implements IRobot {
 
     balancePID = new PIDController(0.03, 0.0, 0.0001);
 
-    gyro = RobotBase.isReal() ? new Gyro() : new SimulationGyro();
+    gyro = new Gyro();
   }
 
   @Override
