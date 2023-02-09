@@ -5,11 +5,15 @@
 
 package com.team871;
 
+import com.team871.config.Gyro;
+import com.team871.config.IGyro;
 import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.config.RobotConfigScorpion;
+import com.team871.config.SimulationGyro;
 import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,12 +29,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   private final DriveTrain drivetrain;
   private final IRobot config;
+  private final IGyro gyro;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     //    config = new RobotConfigFrisbro();
     config = new RobotConfigScorpion();
+    gyro = RobotBase.isReal() ? new Gyro() : new SimulationGyro();
 
     drivetrain =
         new DriveTrain(
@@ -38,10 +44,10 @@ public class RobotContainer {
             config.getFrontRightMotor(),
             config.getRearLeftMotor(),
             config.getRearRightMotor(),
-            config.gyro());
+            gyro);
 
     SmartDashboard.putData("drivetrain", drivetrain);
-    SmartDashboard.putData("Gyro", config.gyro());
+    SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveDurationInput", drivetrain.getDriveDurationInput());
 
     // Configure the trigger bindings
@@ -72,7 +78,7 @@ public class RobotContainer {
 
     config.getXboxController().b().whileTrue(drivetrain.balanceCommand());
     //    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
-    config.getXboxController().leftBumper().whileTrue(config.gyro().resetGyroCommand());
+    config.getXboxController().leftBumper().whileTrue(gyro.resetGyroCommand());
   }
 
   /**

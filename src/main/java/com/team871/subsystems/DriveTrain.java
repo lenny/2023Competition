@@ -1,6 +1,6 @@
 package com.team871.subsystems;
 
-import com.team871.config.Gyro;
+import com.team871.config.IGyro;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -64,7 +64,7 @@ public class DriveTrain extends SubsystemBase {
   private static final double ROTATION_PID_KD = 0;
 
   private final MecanumDrive mecanum;
-  private final Gyro gyro;
+  private final IGyro gyro;
   private final PIDController balancePID;
   private final PIDController rotationPID;
   private final DriveDurationInput driveDurationInput;
@@ -76,7 +76,7 @@ public class DriveTrain extends SubsystemBase {
       MotorController frontRightMotor,
       MotorController backLeftMotor,
       MotorController backRightMotor,
-      Gyro gyro) {
+      IGyro gyro) {
     super();
     mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
@@ -147,10 +147,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase disableMotors() {
-    return runOnce(
-        () -> {
-          motorsEnabled = false;
-        });
+    return runOnce(() -> motorsEnabled = false);
   }
 
   public CommandBase enableMotors() {
@@ -163,16 +160,17 @@ public class DriveTrain extends SubsystemBase {
   public CommandBase driveForwardCommand(double speed) {
     return run(
         () -> {
-          driveMecanum(speed, 0, 0);
+          driveMecanum(speed, 0, rotationPID.calculate(gyro.getYaw()));
         });
   }
 
   public CommandBase driveDurationCommand() {
     return new ProxyCommand(
-            () -> {
-              return driveForwardCommand(driveDurationInput.speed)
-                  .withTimeout(driveDurationInput.duration);
-            })
-        .andThen(driveForwardCommand(0));
+        () -> {
+          return driveForwardCommand(driveDurationInput.speed)
+              .withTimeout(driveDurationInput.duration)
+              .andThen(driveForwardCommand(0).withTimeout(2))
+              .andThen(driveForwardCommand(0));
+        });
   }
 }
