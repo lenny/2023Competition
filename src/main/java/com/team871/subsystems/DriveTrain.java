@@ -172,10 +172,8 @@ public class DriveTrain extends SubsystemBase {
         () -> {
           return driveForwardCommand(driveDurationInput.speed)
               .withTimeout(driveDurationInput.duration)
-              .andThen(driveForwardCommand(0)
-              .withTimeout(2))
+              .andThen(driveForwardCommand(0).withTimeout(2))
               .andThen(driveForwardCommand(0));
         });
-    
   }
 }
