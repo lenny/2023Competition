@@ -42,7 +42,6 @@ public class DriveTrain extends SubsystemBase {
     balancePID = new PIDController(BALANCE_PID_KP, BALANCE_PID_KI, BALANCE_PID_KD);
 
     rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
-    rotationPID.setSetpoint(0);
   }
 
   @Override
@@ -81,20 +80,24 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase balanceCommand() {
-    balancePID.reset();
-    rotationPID.reset();
     return new PIDCommand(
-        balancePID,
-        gyro::getPitch,
-        0,
-        output -> {
-          final double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
-          SmartDashboard.putNumber("pitchPIDOutput", output);
-          SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
-          // positive pitch should be forward and negative pitch should be backwards
-          driveMecanum(-output, 0, rotationPIDOutput);
-        },
-        this);
+            balancePID,
+            gyro::getPitch,
+            0,
+            output -> {
+              final double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
+              SmartDashboard.putNumber("pitchPIDOutput", output);
+              SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
+              // positive pitch should be forward and negative pitch should be backwards
+              driveMecanum(-output, 0, rotationPIDOutput);
+            },
+            this)
+        .beforeStarting(
+            () -> {
+              balancePID.reset();
+              rotationPID.reset();
+              rotationPID.setSetpoint(0);
+            });
   }
 
   public CommandBase disableMotors() {
