@@ -24,7 +24,7 @@ public class DriveTrain extends SubsystemBase {
       return degrees;
     }
 
-    public void setDegrees(double degrees) {
+    public void setDegrees(final double degrees) {
       this.degrees = degrees;
     }
 
@@ -32,7 +32,7 @@ public class DriveTrain extends SubsystemBase {
       return speed;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(final double speed) {
       this.speed = speed;
     }
 
@@ -40,7 +40,7 @@ public class DriveTrain extends SubsystemBase {
       return duration;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(final double duration) {
       this.duration = duration;
     }
 
@@ -50,7 +50,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
+    public void initSendable(final SendableBuilder builder) {
       builder.setSmartDashboardType("DriveDurationInput");
       builder.addDoubleProperty("speed", this::getSpeed, this::setSpeed);
       builder.addDoubleProperty("duration", this::getDuration, this::setDuration);
@@ -82,11 +82,11 @@ public class DriveTrain extends SubsystemBase {
   private boolean motorsEnabled = true;
 
   public DriveTrain(
-      MotorController frontLeftMotor,
-      MotorController frontRightMotor,
-      MotorController backLeftMotor,
-      MotorController backRightMotor,
-      IGyro gyro) {
+      final MotorController frontLeftMotor,
+      final MotorController frontRightMotor,
+      final MotorController backLeftMotor,
+      final MotorController backRightMotor,
+      final IGyro gyro) {
     super();
     mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
@@ -104,7 +104,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   @Override
-  public void initSendable(SendableBuilder builder) {
+  public void initSendable(final SendableBuilder builder) {
     super.initSendable(builder);
     SmartDashboard.putData("DisableMotorsCommand", disableMotors());
     SmartDashboard.putData("EnableMotorsCommand", enableMotors());
@@ -120,7 +120,7 @@ public class DriveTrain extends SubsystemBase {
     return motorsEnabled;
   }
 
-  private void driveMecanum(double xValue, double yValue, double zValue) {
+  private void driveMecanum(final double xValue, final double yValue, final double zValue) {
     SmartDashboard.putNumber("mecanumX", xValue);
     SmartDashboard.putNumber("mecanumY", yValue);
     SmartDashboard.putNumber("mecanumZ", zValue);
@@ -132,7 +132,7 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
-  public CommandBase defaultCommand(XboxController xboxController) {
+  public CommandBase defaultCommand(final XboxController xboxController) {
     return run(
         () -> {
           driveMecanum(
@@ -148,7 +148,7 @@ public class DriveTrain extends SubsystemBase {
         gyro::getPitch,
         0,
         output -> {
-          double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
+          final double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
           SmartDashboard.putNumber("pitchPIDOutput", output);
           SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
           // positive pitch should be forward and negative pitch should be backwards
@@ -168,7 +168,7 @@ public class DriveTrain extends SubsystemBase {
         });
   }
 
-  public CommandBase driveForwardCommand(double speed) {
+  public CommandBase driveForwardCommand(final double speed) {
     return run(
         () -> {
           driveMecanum(speed, 0, rotationPID.calculate(gyro.getYaw()));
@@ -185,7 +185,7 @@ public class DriveTrain extends SubsystemBase {
         });
   }
 
-  public CommandBase rotateCommand(double degrees) {
+  public CommandBase rotateCommand(final double degrees) {
     rotationPID.reset();
     return new PIDCommand(
         rotationPID, gyro::getYaw, degrees, output -> driveMecanum(0, 0, output), this);
