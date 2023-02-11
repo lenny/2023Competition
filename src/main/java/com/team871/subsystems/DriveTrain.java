@@ -175,12 +175,12 @@ public class DriveTrain extends SubsystemBase {
         () -> {
           return driveForwardCommand(testInputs.speed)
               .withTimeout(testInputs.duration)
-              .andThen(stop().withTimeout(2))
-              .andThen(stop());
+              .andThen(stopCommand().withTimeout(2))
+              .andThen(stopCommand());
         });
   }
 
-  private Command stop() {
+  private Command stopCommand() {
     return run(() -> driveMecanum(0, 0, 0));
   }
 
