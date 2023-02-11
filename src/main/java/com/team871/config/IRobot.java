@@ -25,12 +25,26 @@ public interface IRobot {
    */
   MotorController getRearRightMotor();
 
+  MotorController getShoulderMotor();
+
+  MotorController getArmExtensionMotor();
+
+  MotorController getWristMotor();
+
+  MotorController getClawMotor();
+
+  MotorController getLeftIntakeMotor();
+
+  MotorController getRightIntakeMotor();
+
   /**
    * @return gyro
    */
   IGyro gyro();
 
-  CommandXboxController getXboxController();
+  CommandXboxController getDrivetrainContoller();
+
+  CommandXboxController getArmController();
 
   PIDController getBalancePID();
 }
