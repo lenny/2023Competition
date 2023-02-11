@@ -94,7 +94,6 @@ public class DriveTrain extends SubsystemBase {
             this)
         .beforeStarting(
             () -> {
-              balancePID.reset();
               rotationPID.reset();
               rotationPID.setSetpoint(0);
             });
@@ -121,7 +120,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase rotateCommand(final double degrees) {
-    rotationPID.reset();
     return new PIDCommand(
         rotationPID, gyro::getYaw, degrees, output -> driveMecanum(0, 0, output), this);
   }
