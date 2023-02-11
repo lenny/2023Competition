@@ -18,12 +18,6 @@ public class DriveTrainExtensions implements Sendable {
 
     SmartDashboard.putData("driveDuration", delegateCommand(this::driveDurationCommand));
     SmartDashboard.putData("rotate", delegateCommand(this::rotateCommand));
-
-    delegateCommand(
-        () -> {
-          return driveDurationCommand();
-        });
-    delegateCommand(this::driveDurationCommand);
   }
 
   double speed = 0;
