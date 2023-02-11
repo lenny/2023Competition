@@ -17,7 +17,6 @@ import com.team871.subsystems.DriveTrain;
 import com.team871.subsystems.Wrist;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -103,32 +102,36 @@ public class RobotContainer {
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    controller.a().whileTrue(Commands.print("a button pressed"));
-    // controller.a().onTrue(claw.toggleIntakeMotors(true));
-    // controller.a().onFalse(claw.toggleIntakeMotors(false));
+    controller.a().onTrue(claw.toggleIntakeMotorsCommand());
 
-    controller
-      // .rightStick()
-    // .leftTrigger()
-        .axisGreaterThan(XboxController.Axis.kRightX.value, -1)
-        .whileTrue(Commands.print("right stick " + controller.getRightX()));
-        // .whileTrue(claw.pinchCommand(controller.getLeftTriggerAxis()));
+    controller.rightBumper().onTrue(claw.invertIntakeCommand());
+
+    claw.setDefaultCommand(
+        Commands.run(
+            () -> {
+              claw.setPinch(controller.getRightX());
+            }));
   }
 
-  private void configureWristBindings() {}
+  private void configureWristBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    wrist.setDefaultCommand(
+        Commands.run(
+            () -> {
+              wrist.moveWristPitch(controller.getRightY());
+            }));
+  }
 
   private void configureArmControllerBindings() {
     final CommandXboxController controller = config.getArmController();
-    controller
-        .axisGreaterThan(XboxController.Axis.kRightY.value, -1)
-        .whileTrue(arm.moveShoulderPitchCommand(controller.getRightY()));
 
-    controller
-      // .leftStick()
-    // .rightTrigger()
-        .axisGreaterThan(XboxController.Axis.kLeftX.value, -1)
-        .whileTrue(Commands.print("left stick " + controller.getLeftX()));
-        // .whileTrue(arm.moveExtensionCommand(controller.getRightTriggerAxis()));
+    arm.setDefaultCommand(
+        Commands.run(
+            () -> {
+              arm.moveShoulderPitch(controller.getLeftY());
+              arm.moveExtension(controller.getLeftX());
+            }));
   }
 
   private void configureDrivetrainControllerBindings() {
