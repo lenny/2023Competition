@@ -113,10 +113,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase driveDurationCommand(final double speed, final double duration) {
-    return driveForwardCommand(speed)
-        .withTimeout(duration)
-        .andThen(stopCommand().withTimeout(2))
-        .andThen(stopCommand());
+    return driveForwardCommand(speed).withTimeout(duration).andThen(driveForwardCommand(0));
   }
 
   public Command stopCommand() {
@@ -129,3 +126,4 @@ public class DriveTrain extends SubsystemBase {
         rotationPID, gyro::getYaw, degrees, output -> driveMecanum(0, 0, output), this);
   }
 }
+
