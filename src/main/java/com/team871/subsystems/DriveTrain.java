@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -174,9 +175,13 @@ public class DriveTrain extends SubsystemBase {
         () -> {
           return driveForwardCommand(testInputs.speed)
               .withTimeout(testInputs.duration)
-              .andThen(driveForwardCommand(0).withTimeout(2))
-              .andThen(driveForwardCommand(0));
+              .andThen(stop().withTimeout(2))
+              .andThen(stop());
         });
+  }
+
+  private Command stop() {
+    return run(() -> driveMecanum(0, 0, 0));
   }
 
   public CommandBase rotateCommand(final double degrees) {
