@@ -162,17 +162,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase enableMotors() {
-    return runOnce(
-        () -> {
-          motorsEnabled = true;
-        });
+    return runOnce(() -> motorsEnabled = true);
   }
 
   public CommandBase driveForwardCommand(final double speed) {
-    return run(
-        () -> {
-          driveMecanum(speed, 0, rotationPID.calculate(gyro.getYaw()));
-        });
+    return run(() -> driveMecanum(speed, 0, rotationPID.calculate(gyro.getYaw())));
   }
 
   public CommandBase driveDurationCommand() {
