@@ -11,6 +11,7 @@ import com.team871.config.IRobot;
 // import com.team871.config.RobotConfigFrisbroTest;
 import com.team871.config.RobotConfigScorpion;
 import com.team871.config.SimulationGyro;
+import com.team871.dashboard.DriveTrainExtensions;
 import com.team871.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -48,7 +49,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("drivetrain", drivetrain);
     SmartDashboard.putData("Gyro", gyro);
-    SmartDashboard.putData("DriveDurationInput", drivetrain.getTestInputs());
+    SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
 
     // Configure the trigger bindings
     configureBindings();

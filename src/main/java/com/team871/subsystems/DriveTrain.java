@@ -2,7 +2,6 @@ package com.team871.subsystems;
 
 import com.team871.config.IGyro;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -11,60 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveTrain extends SubsystemBase {
-
-  private static class TestInputs implements Sendable {
-    private double speed = 0;
-    private double duration = 0;
-    private double degrees = 0;
-
-    public double getDegrees() {
-      return degrees;
-    }
-
-    public void setDegrees(final double degrees) {
-      this.degrees = degrees;
-    }
-
-    public double getSpeed() {
-      return speed;
-    }
-
-    public void setSpeed(final double speed) {
-      this.speed = speed;
-    }
-
-    public double getDuration() {
-      return duration;
-    }
-
-    public void setDuration(final double duration) {
-      this.duration = duration;
-    }
-
-    public void reset() {
-      this.speed = 0;
-      this.duration = 0;
-    }
-
-    @Override
-    public void initSendable(final SendableBuilder builder) {
-      builder.setSmartDashboardType("DriveDurationInput");
-      builder.addDoubleProperty("speed", this::getSpeed, this::setSpeed);
-      builder.addDoubleProperty("duration", this::getDuration, this::setDuration);
-      builder.addDoubleProperty("degrees", this::getDegrees, this::setDegrees);
-      builder.setActuator(true);
-      builder.setSafeState(this::reset);
-    }
-
-    @Override
-    public String toString() {
-      return "DriveDurationInput{" + "speed=" + speed + ", duration=" + duration + '}';
-    }
-  }
 
   private static final double BALANCE_PID_KP = 0.005;
   private static final double BALANCE_PID_KI = 0;
@@ -78,7 +26,6 @@ public class DriveTrain extends SubsystemBase {
   private final IGyro gyro;
   private final PIDController balancePID;
   private final PIDController rotationPID;
-  private final TestInputs testInputs;
 
   private boolean motorsEnabled = true;
 
@@ -96,12 +43,6 @@ public class DriveTrain extends SubsystemBase {
 
     rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
     rotationPID.setSetpoint(0);
-
-    testInputs = new TestInputs();
-  }
-
-  public TestInputs getTestInputs() {
-    return testInputs;
   }
 
   @Override
@@ -112,8 +53,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putData("BalanceCommand", balanceCommand());
     SmartDashboard.putData("BalancePID", balancePID);
     SmartDashboard.putData("RotationPID", rotationPID);
-    SmartDashboard.putData("DriveDurationCommand", driveDurationCommand());
-    SmartDashboard.putData("RotateCommand", rotateCommand());
     builder.addBooleanProperty("MotorStatus", this::isMotorsEnabled, null);
   }
 
@@ -170,17 +109,14 @@ public class DriveTrain extends SubsystemBase {
     return run(() -> driveMecanum(speed, 0, rotationPID.calculate(gyro.getYaw())));
   }
 
-  public CommandBase driveDurationCommand() {
-    return new ProxyCommand(
-        () -> {
-          return driveForwardCommand(testInputs.speed)
-              .withTimeout(testInputs.duration)
-              .andThen(stopCommand().withTimeout(2))
-              .andThen(stopCommand());
-        });
+  public CommandBase driveDurationCommand(final double speed, final double duration) {
+    return driveForwardCommand(speed)
+        .withTimeout(duration)
+        .andThen(stopCommand().withTimeout(2))
+        .andThen(stopCommand());
   }
 
-  private Command stopCommand() {
+  public Command stopCommand() {
     return run(() -> driveMecanum(0, 0, 0));
   }
 
@@ -188,10 +124,5 @@ public class DriveTrain extends SubsystemBase {
     rotationPID.reset();
     return new PIDCommand(
         rotationPID, gyro::getYaw, degrees, output -> driveMecanum(0, 0, output), this);
-  }
-
-  public CommandBase rotateCommand() {
-    rotationPID.reset();
-    return new ProxyCommand(() -> rotateCommand(testInputs.degrees));
   }
 }
