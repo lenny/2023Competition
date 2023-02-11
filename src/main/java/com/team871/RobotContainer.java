@@ -102,12 +102,17 @@ public class RobotContainer {
 
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
-    controller.a().onTrue(claw.toggleIntakeMotors(true));
-    controller.a().onFalse(claw.toggleIntakeMotors(false));
+
+    controller.a().whileTrue(Commands.print("a button pressed"));
+    // controller.a().onTrue(claw.toggleIntakeMotors(true));
+    // controller.a().onFalse(claw.toggleIntakeMotors(false));
 
     controller
-        .axisGreaterThan(XboxController.Axis.kLeftTrigger.value, -1)
-        .whileTrue(Commands.print("left trigger output is: " + controller.getLeftTriggerAxis()));
+      // .rightStick()
+    // .leftTrigger()
+        .axisGreaterThan(XboxController.Axis.kRightX.value, -1)
+        .whileTrue(Commands.print("right stick " + controller.getRightX()));
+        // .whileTrue(claw.pinchCommand(controller.getLeftTriggerAxis()));
   }
 
   private void configureWristBindings() {}
@@ -119,9 +124,11 @@ public class RobotContainer {
         .whileTrue(arm.moveShoulderPitchCommand(controller.getRightY()));
 
     controller
-        .axisGreaterThan(XboxController.Axis.kRightTrigger.value, -1)
-        .whileTrue(Commands.print("right trigger output is: " + controller.getRightTriggerAxis()));
-    // .whileTrue(arm.moveExtensionCommand(controller.getRightTriggerAxis()));
+      // .leftStick()
+    // .rightTrigger()
+        .axisGreaterThan(XboxController.Axis.kLeftX.value, -1)
+        .whileTrue(Commands.print("left stick " + controller.getLeftX()));
+        // .whileTrue(arm.moveExtensionCommand(controller.getRightTriggerAxis()));
   }
 
   private void configureDrivetrainControllerBindings() {

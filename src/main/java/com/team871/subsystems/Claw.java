@@ -2,6 +2,7 @@ package com.team871.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,5 +31,14 @@ public class Claw extends SubsystemBase {
 
   public CommandBase toggleIntakeMotors(final boolean b) {
     return run(() -> toggleIntakeMotors(b));
+  }
+
+  /**
+   * 
+   * @param output beween 0 and 1. 1 full pinched, 0 full open
+   * @return
+   */
+  public CommandBase pinchCommand(double output) {
+      return run(() -> setPinch(output));
   }
 }
