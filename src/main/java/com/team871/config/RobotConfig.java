@@ -60,13 +60,13 @@ public class RobotConfig implements IRobot {
     rightIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     rightIntakeMotor.setInverted(true);
 
-    wristMotor = new WPI_TalonSRX(8);
+    wristMotor = new WPI_TalonSRX(10);
     wristMotor.setNeutralMode(NeutralMode.Coast);
 
     clawMotor = new WPI_TalonSRX(9);
     clawMotor.setNeutralMode(NeutralMode.Coast);
 
-    armExtensionMotor = new WPI_TalonSRX(10);
+    armExtensionMotor = new WPI_TalonSRX(8);
     armExtensionMotor.setNeutralMode(NeutralMode.Coast);
 
     drivetrainController = new CommandXboxController(0);

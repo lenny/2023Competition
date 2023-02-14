@@ -3,6 +3,7 @@ package com.team871.subsystems;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.Supplier;
 
 public class Arm extends SubsystemBase {
   private final MotorController shoulderMotor;
@@ -27,5 +28,14 @@ public class Arm extends SubsystemBase {
 
   public CommandBase moveExtensionCommand(double output) {
     return run(() -> moveExtension(output));
+  }
+
+  public void setdefaultCommand(Supplier<Double> shoulderPitch, Supplier<Double> extension) {
+    setDefaultCommand(
+        run(
+            () -> {
+              moveShoulderPitch(shoulderPitch.get());
+              moveExtension(extension.get());
+            }));
   }
 }
