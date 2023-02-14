@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.Supplier;
 
 public class Claw extends SubsystemBase {
   private static double INTAKE_MOTOR_SPEED = .02;
@@ -50,5 +51,9 @@ public class Claw extends SubsystemBase {
           intakeInverted = !intakeInverted;
           intakeMotors.setInverted(intakeInverted);
         });
+  }
+
+  public void setdefaultCommand(Supplier<Double> clawPinch) {
+    setDefaultCommand(run(() -> setPinch(clawPinch.get())));
   }
 }
