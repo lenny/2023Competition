@@ -104,7 +104,7 @@ public class RobotContainer {
 
     controller.a().onTrue(claw.toggleIntakeMotorsCommand());
 
-    controller.rightBumper().onTrue(claw.invertIntakeCommand());
+    controller.rightBumper().onTrue(claw .invertIntakeCommand());
 
     claw.setDefaultCommand(
         Commands.run(
