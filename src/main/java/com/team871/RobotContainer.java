@@ -12,9 +12,10 @@ import com.team871.config.RobotConfig;
 import com.team871.config.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
 import com.team871.subsystems.ArmExtension;
-import com.team871.subsystems.Shoulder;
 import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
+import com.team871.subsystems.Intake;
+import com.team871.subsystems.Shoulder;
 import com.team871.subsystems.Wrist;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -36,6 +37,7 @@ public class RobotContainer {
   private final ArmExtension armExtension;
   private final Wrist wrist;
   private final Claw claw;
+  private final Intake intake;
   private final IRobot config;
   private final IGyro gyro;
 
@@ -54,11 +56,9 @@ public class RobotContainer {
             gyro);
 
     shoulder = new Shoulder(config.getShoulderMotor());
-
     wrist = new Wrist(config.getWristMotor());
-
-    claw =
-        new Claw(config.getClawMotor(), config.getLeftIntakeMotor(), config.getRightIntakeMotor());
+    claw = new Claw(config.getClawMotor());
+    intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
     armExtension = new ArmExtension(config.getArmExtensionMotor());
 
@@ -99,16 +99,14 @@ public class RobotContainer {
     configureArmControllerBindings();
     configureClawBindings();
     configureWristBindings();
+    configureIntakeBindings();
+    configureArmExtensionBindings();
   }
 
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    controller.a().whileTrue(claw.toggleIntakeMotorsCommand());
-
-    controller.rightBumper().onTrue(claw .invertIntakeCommand());
-
-    claw.setdefaultCommand(controller::getRightX);
+    claw.setDefaultCommand(claw.run(() -> claw.setPinch(controller.getRightX())));
   }
 
   private void configureWristBindings() {
@@ -126,7 +124,14 @@ public class RobotContainer {
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    armExtension.setdefaultCommand(controller:: getLeftX);
+    armExtension.setdefaultCommand(controller::getLeftX);
+  }
+
+  private void configureIntakeBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    controller.a().whileTrue(intake.run(intake :: pullIn));
+    controller.rightBumper().whileTrue(intake.run(intake :: pullOut));
   }
 
   private void configureDrivetrainControllerBindings() {
