@@ -11,7 +11,8 @@ import com.team871.config.IRobot;
 import com.team871.config.RobotConfig;
 import com.team871.config.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
-import com.team871.subsystems.Arm;
+import com.team871.subsystems.ArmExtension;
+import com.team871.subsystems.Shoulder;
 import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
 import com.team871.subsystems.Wrist;
@@ -31,7 +32,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   private final DriveTrain drivetrain;
-  private final Arm arm;
+  private final Shoulder shoulder;
+  private final ArmExtension armExtension;
   private final Wrist wrist;
   private final Claw claw;
   private final IRobot config;
@@ -39,7 +41,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
     //    config = new RobotConfigFrisbro();
     config = new RobotConfig();
     gyro = RobotBase.isReal() ? new Gyro() : new SimulationGyro();
@@ -52,15 +53,17 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
-    arm = new Arm(config.getShoulderMotor(), config.getArmExtensionMotor());
+    shoulder = new Shoulder(config.getShoulderMotor());
 
     wrist = new Wrist(config.getWristMotor());
 
     claw =
         new Claw(config.getClawMotor(), config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
+    armExtension = new ArmExtension(config.getArmExtensionMotor());
+
     SmartDashboard.putData("DriveTrain", drivetrain);
-    SmartDashboard.putData("Arm", arm);
+    SmartDashboard.putData("Arm", shoulder);
     SmartDashboard.putData("Wrist", wrist);
     SmartDashboard.putData("Claw", claw);
     SmartDashboard.putData("Gyro", gyro);
@@ -101,23 +104,29 @@ public class RobotContainer {
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    controller.a().onTrue(claw.toggleIntakeMotorsCommand());
+    controller.a().whileTrue(claw.toggleIntakeMotorsCommand());
 
     controller.rightBumper().onTrue(claw .invertIntakeCommand());
 
-    claw.setdefaultCommand(() -> controller.getRightX());
+    claw.setdefaultCommand(controller::getRightX);
   }
 
   private void configureWristBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    wrist.setdefaultCommand(() -> controller.getRightY());
+    wrist.setdefaultCommand(controller::getRightY);
   }
 
   private void configureArmControllerBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    arm.setdefaultCommand(() -> controller.getLeftY(), () -> controller.getLeftX());
+    shoulder.setdefaultCommand(controller::getLeftY);
+  }
+
+  private void configureArmExtensionBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    armExtension.setdefaultCommand(controller:: getLeftX);
   }
 
   private void configureDrivetrainControllerBindings() {

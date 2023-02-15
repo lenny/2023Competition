@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.Supplier;
 
 public class Claw extends SubsystemBase {
-  private static double INTAKE_MOTOR_SPEED = .02;
+  private static double INTAKE_MOTOR_SPEED = .5;
 
   private final MotorController pinchMotor;
   private final MotorController intakeMotors;

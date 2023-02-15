@@ -58,7 +58,7 @@ public class RobotConfig implements IRobot {
 
     rightIntakeMotor = new CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless);
     rightIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rightIntakeMotor.setInverted(true);
+    rightIntakeMotor.setInverted(false);
 
     wristMotor = new WPI_TalonSRX(10);
     wristMotor.setNeutralMode(NeutralMode.Coast);
