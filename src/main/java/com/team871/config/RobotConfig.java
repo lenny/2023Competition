@@ -69,6 +69,7 @@ public class RobotConfig implements IRobot {
 
     armExtensionMotor = new WPI_TalonSRX(8);
     armExtensionMotor.setNeutralMode(NeutralMode.Coast);
+    armExtensionMotor.setInverted(true);
 
     drivetrainController = new CommandXboxController(0);
     armController = new CommandXboxController(1);
