@@ -41,6 +41,7 @@ public class RobotContainer {
   private final IRobot config;
   private final IGyro gyro;
 
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     //    config = new RobotConfigFrisbro();
@@ -68,6 +69,7 @@ public class RobotContainer {
     SmartDashboard.putData("Claw", claw);
     SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
+    SmartDashboard.putData("extensionEncoderDistance", config.getExtensionEncoder());
 
     // Configure the trigger bindings
     configureBindings();
@@ -106,7 +108,7 @@ public class RobotContainer {
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    claw.setDefaultCommand(claw.run(() -> claw.setPinch(controller.getRightX())));
+    claw.setDefaultCommand(controller::getRightX);
   }
 
   private void configureWristBindings() {
@@ -123,15 +125,14 @@ public class RobotContainer {
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
-
-    armExtension.setdefaultCommand(controller::getLeftX);
+    armExtension.setdefaultCommand(controller::getLeftX); // invert this to negative
   }
 
   private void configureIntakeBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    controller.a().whileTrue(intake.run(intake :: pullIn));
-    controller.rightBumper().whileTrue(intake.run(intake :: pullOut));
+    controller.a().whileTrue(intake.run(intake::pullIn));
+    controller.rightBumper().whileTrue(intake.run(intake::pullOut));
   }
 
   private void configureDrivetrainControllerBindings() {

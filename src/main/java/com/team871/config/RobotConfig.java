@@ -26,6 +26,7 @@ public class RobotConfig implements IRobot {
   private final PIDController balancePID;
 
   private final IGyro gyro;
+  private final DistanceEncoder extensionEncoder;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -75,6 +76,8 @@ public class RobotConfig implements IRobot {
     balancePID = new PIDController(0.03, 0.0, 0.0001);
 
     gyro = new Gyro();
+
+    extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
   }
 
   @Override
@@ -110,6 +113,11 @@ public class RobotConfig implements IRobot {
   @Override
   public PIDController getBalancePID() {
     return balancePID;
+  }
+
+  @Override
+  public DistanceEncoder getExtensionEncoder() {
+    return extensionEncoder;
   }
 
   @Override

@@ -10,9 +10,7 @@ public class Intake extends SubsystemBase {
 
   private final MotorController intakeMotors;
 
-  public Intake(
-      final MotorController leftIntakeMotor,
-      final MotorController rightIntakeMotor) {
+  public Intake(final MotorController leftIntakeMotor, final MotorController rightIntakeMotor) {
     this.intakeMotors = new MotorControllerGroup(leftIntakeMotor, rightIntakeMotor);
     setDefaultCommand(run(this::stop));
   }

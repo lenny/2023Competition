@@ -47,4 +47,6 @@ public interface IRobot {
   CommandXboxController getArmController();
 
   PIDController getBalancePID();
+
+  DistanceEncoder getExtensionEncoder();
 }
