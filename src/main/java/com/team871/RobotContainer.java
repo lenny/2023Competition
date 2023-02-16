@@ -8,11 +8,15 @@ package com.team871;
 import com.team871.config.Gyro;
 import com.team871.config.IGyro;
 import com.team871.config.IRobot;
-// import com.team871.config.RobotConfigFrisbroTest;
-import com.team871.config.RobotConfigScorpion;
+import com.team871.config.RobotConfig;
 import com.team871.config.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
+import com.team871.subsystems.ArmExtension;
+import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
+import com.team871.subsystems.Intake;
+import com.team871.subsystems.Shoulder;
+import com.team871.subsystems.Wrist;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,14 +33,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   private final DriveTrain drivetrain;
+  private final Shoulder shoulder;
+  private final ArmExtension armExtension;
+  private final Wrist wrist;
+  private final Claw claw;
+  private final Intake intake;
   private final IRobot config;
   private final IGyro gyro;
 
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
     //    config = new RobotConfigFrisbro();
-    config = new RobotConfigScorpion();
+    config = new RobotConfig();
     gyro = RobotBase.isReal() ? new Gyro() : new SimulationGyro();
 
     drivetrain =
@@ -47,9 +56,20 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
-    SmartDashboard.putData("drivetrain", drivetrain);
+    shoulder = new Shoulder(config.getShoulderMotor());
+    wrist = new Wrist(config.getWristMotor());
+    claw = new Claw(config.getClawMotor());
+    intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
+
+    armExtension = new ArmExtension(config.getArmExtensionMotor());
+
+    SmartDashboard.putData("DriveTrain", drivetrain);
+    SmartDashboard.putData("Arm", shoulder);
+    SmartDashboard.putData("Wrist", wrist);
+    SmartDashboard.putData("Claw", claw);
     SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
+    SmartDashboard.putData("extensionEncoderDistance", config.getExtensionEncoder());
 
     // Configure the trigger bindings
     configureBindings();
@@ -58,7 +78,7 @@ public class RobotContainer {
 
     CommandScheduler.getInstance()
         .setDefaultCommand(
-            drivetrain, drivetrain.defaultCommand(config.getXboxController().getHID()));
+            drivetrain, drivetrain.defaultCommand(config.getDrivetrainContoller().getHID()));
 
     // Suppress "Joystick Button 2 on port 0 not available, check if controller is plugged in"
     // flooding in console
@@ -77,9 +97,48 @@ public class RobotContainer {
   private void configureBindings() {
     System.out.println("configure bindings");
 
-    config.getXboxController().b().whileTrue(drivetrain.balanceCommand());
-    //    config.getXboxController().a().whileTrue(drivetrain.driveDuration(1, 5));
-    config.getXboxController().leftBumper().whileTrue(gyro.resetGyroCommand());
+    configureDrivetrainControllerBindings();
+    configureArmControllerBindings();
+    configureClawBindings();
+    configureWristBindings();
+    configureIntakeBindings();
+    configureArmExtensionBindings();
+  }
+
+  private void configureClawBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    claw.setDefaultCommand(controller::getRightX);
+  }
+
+  private void configureWristBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    wrist.setdefaultCommand(controller::getRightY);
+  }
+
+  private void configureArmControllerBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    shoulder.setdefaultCommand(controller::getLeftY);
+  }
+
+  private void configureArmExtensionBindings() {
+    final CommandXboxController controller = config.getArmController();
+    armExtension.setdefaultCommand(controller::getLeftX); // invert this to negative
+  }
+
+  private void configureIntakeBindings() {
+    final CommandXboxController controller = config.getArmController();
+
+    controller.a().whileTrue(intake.run(intake::pullIn));
+    controller.rightBumper().whileTrue(intake.run(intake::pullOut));
+  }
+
+  private void configureDrivetrainControllerBindings() {
+    final CommandXboxController drivetrainController = config.getDrivetrainContoller();
+    drivetrainController.b().whileTrue(drivetrain.balanceCommand());
+    drivetrainController.leftBumper().whileTrue(gyro.resetGyroCommand());
   }
 
   /**
