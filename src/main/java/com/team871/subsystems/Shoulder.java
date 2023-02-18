@@ -21,7 +21,6 @@ public class Shoulder extends SubsystemBase {
   }
 
   public void setdefaultCommand(Supplier<Double> shoulderPitch) {
-    setDefaultCommand(
-        run(() -> moveShoulderPitch(shoulderPitch.get())));
+    setDefaultCommand(run(() -> moveShoulderPitch(shoulderPitch.get())));
   }
 }

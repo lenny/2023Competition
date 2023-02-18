@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,11 +22,12 @@ public class ArmExtension extends SubsystemBase {
   private final DistanceEncoder distanceEncoder;
   private double positionInchesSetpoint;
 
-
   public ArmExtension(final MotorController extensionMotor, final DistanceEncoder distanceEncoder) {
     this.extensionMotor = extensionMotor;
-    extensionPID = new PIDController(EXTENSION_PID_KP, EXTENSION_PID_KI, EXTENSION_PID_KD);
+    this.extensionPID = new PIDController(EXTENSION_PID_KP, EXTENSION_PID_KI, EXTENSION_PID_KD);
     this.distanceEncoder = distanceEncoder;
+    SmartDashboard.putData("extensionPID", extensionPID);
+    SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
   }
 
   public void moveExtension(final double output) {
@@ -33,32 +35,35 @@ public class ArmExtension extends SubsystemBase {
     extensionMotor.set(output);
   }
 
-  public CommandBase moveExtensionCommand(double output) {
-    return run(() -> moveExtension(output));
-  }
-
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
 
-    builder.addDoubleProperty("distanceSetpoint", this::getPositionInchesSetpoint, this::setPositionInchesSetpoint);
-    SmartDashboard.putData("extensionPID", extensionPID);
+    builder.addDoubleProperty(
+        "distanceSetpoint", this::getPositionInchesSetpoint, this::setPositionInchesSetpoint);
   }
 
   public void setdefaultCommand(Supplier<Double> extension) {
-    setDefaultCommand(
+    final Command command =
         run(
             () -> {
               moveExtension(extension.get());
-            }));
+            });
+    command.setName("ManualExtensionCommand");
+    setDefaultCommand(command);
   }
 
   public CommandBase extensionPIDCommand() {
-    return new PIDCommand(
+    final CommandBase command =
+        new PIDCommand(
             extensionPID,
             distanceEncoder::getDistance,
             this::getPositionInchesSetpoint,
-            this::moveExtension, this);
+            this::moveExtension,
+            this);
+
+    command.setName("PIDExtensionCommand");
+    return command;
   }
 
   public CommandBase resetExtensionEncoderCommand() {

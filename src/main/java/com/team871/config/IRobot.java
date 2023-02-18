@@ -49,4 +49,12 @@ public interface IRobot {
   PIDController getBalancePID();
 
   DistanceEncoder getExtensionEncoder();
+
+  double getLeftXDeadband();
+
+  double getLeftYDeadband();
+
+  double getRightXDeadband();
+
+  double getRightYDeadband();
 }

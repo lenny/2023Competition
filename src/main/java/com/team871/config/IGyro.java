@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public interface IGyro extends Sendable {
 
-  public CommandBase resetGyroCommand();
+  CommandBase resetGyroCommand();
 
-  public double getYaw();
+  double getYaw();
   /**
    * @return the rotation around the Y axis using NEU (north east up) orientation. -180 to 180
    */
-  public double getPitch();
+  double getPitch();
 }
