@@ -28,6 +28,11 @@ public class RobotConfig implements IRobot {
   private final IGyro gyro;
   private final DistanceEncoder extensionEncoder;
 
+  private final double leftXDeadband = .09;
+  private final double leftYDeadband = .09;
+  private final double rightXDeadband = .09;
+  private final double rightYDeadband = .09;
+
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
     frontLeft = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -119,6 +124,26 @@ public class RobotConfig implements IRobot {
   @Override
   public DistanceEncoder getExtensionEncoder() {
     return extensionEncoder;
+  }
+
+  @Override
+  public double getLeftXDeadband() {
+    return leftXDeadband;
+  }
+
+  @Override
+  public double getLeftYDeadband() {
+    return leftYDeadband;
+  }
+
+  @Override
+  public double getRightXDeadband() {
+    return rightXDeadband;
+  }
+
+  @Override
+  public double getRightYDeadband() {
+    return rightYDeadband;
   }
 
   @Override

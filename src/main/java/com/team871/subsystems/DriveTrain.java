@@ -36,22 +36,21 @@ public class DriveTrain extends SubsystemBase {
       final MotorController backRightMotor,
       final IGyro gyro) {
     super();
-    mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
+    this.mecanum = new MecanumDrive(frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor);
     this.gyro = gyro;
+    this.balancePID = new PIDController(BALANCE_PID_KP, BALANCE_PID_KI, BALANCE_PID_KD);
+    this.rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
 
-    balancePID = new PIDController(BALANCE_PID_KP, BALANCE_PID_KI, BALANCE_PID_KD);
-
-    rotationPID = new PIDController(ROTATION_PID_KP, ROTATION_PID_KI, ROTATION_PID_KD);
-  }
-
-  @Override
-  public void initSendable(final SendableBuilder builder) {
-    super.initSendable(builder);
     SmartDashboard.putData("DisableMotorsCommand", disableMotors());
     SmartDashboard.putData("EnableMotorsCommand", enableMotors());
     SmartDashboard.putData("BalanceCommand", balanceCommand());
     SmartDashboard.putData("BalancePID", balancePID);
     SmartDashboard.putData("RotationPID", rotationPID);
+  }
+
+  @Override
+  public void initSendable(final SendableBuilder builder) {
+    super.initSendable(builder);
     builder.addBooleanProperty("MotorStatus", this::isMotorsEnabled, null);
   }
 
@@ -63,7 +62,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("mecanumX", xValue);
     SmartDashboard.putNumber("mecanumY", yValue);
     SmartDashboard.putNumber("mecanumZ", zValue);
-    SmartDashboard.putBoolean("motorStatus", motorsEnabled);
     if (motorsEnabled) {
       mecanum.driveCartesian(xValue, yValue, zValue);
     } else {
@@ -72,31 +70,41 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public CommandBase defaultCommand(final XboxController xboxController) {
-    return run(
-        () -> {
-          driveMecanum(
-              -xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
-        });
+    CommandBase defaultCommand =
+        run(
+            () -> {
+              driveMecanum(
+                  -xboxController.getLeftY(),
+                  xboxController.getLeftX(),
+                  xboxController.getRightX());
+            });
+
+    defaultCommand.setName("DriveMechanumCommand");
+    return defaultCommand;
   }
 
   public CommandBase balanceCommand() {
-    return new PIDCommand(
-            balancePID,
-            gyro::getPitch,
-            0,
-            output -> {
-              final double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
-              SmartDashboard.putNumber("pitchPIDOutput", output);
-              SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
-              // positive pitch should be forward and negative pitch should be backwards
-              driveMecanum(-output, 0, rotationPIDOutput);
-            },
-            this)
-        .beforeStarting(
-            () -> {
-              rotationPID.reset();
-              rotationPID.setSetpoint(0);
-            });
+    final CommandBase command =
+        new PIDCommand(
+                balancePID,
+                gyro::getPitch,
+                0,
+                output -> {
+                  final double rotationPIDOutput = rotationPID.calculate(gyro.getYaw());
+                  SmartDashboard.putNumber("pitchPIDOutput", output);
+                  SmartDashboard.putNumber("yawPIDOutput", rotationPIDOutput);
+                  // positive pitch should be forward and negative pitch should be backwards
+                  driveMecanum(-output, 0, rotationPIDOutput);
+                },
+                this)
+            .beforeStarting(
+                () -> {
+                  rotationPID.reset();
+                  rotationPID.setSetpoint(0);
+                });
+
+    command.setName("BalanceCommand");
+    return command;
   }
 
   public CommandBase disableMotors() {

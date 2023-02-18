@@ -17,6 +17,7 @@ import com.team871.subsystems.DriveTrain;
 import com.team871.subsystems.Intake;
 import com.team871.subsystems.Shoulder;
 import com.team871.subsystems.Wrist;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +41,6 @@ public class RobotContainer {
   private final Intake intake;
   private final IRobot config;
   private final IGyro gyro;
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -70,7 +70,6 @@ public class RobotContainer {
     SmartDashboard.putData("ArmExtension", armExtension);
     SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
-    SmartDashboard.putData("extensionEncoderDistance", config.getExtensionEncoder());
 
     // Configure the trigger bindings
     configureBindings();
@@ -109,24 +108,28 @@ public class RobotContainer {
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    claw.setDefaultCommand(controller::getLeftX);
+    claw.setDefaultCommand(
+        () -> MathUtil.applyDeadband(controller.getLeftX(), config.getLeftXDeadband()));
   }
 
   private void configureWristBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    wrist.setdefaultCommand(controller::getRightY);
+    wrist.setdefaultCommand(
+        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
   }
 
   private void configureArmControllerBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    shoulder.setdefaultCommand(controller::getLeftY);
+    shoulder.setdefaultCommand(
+        () -> MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()));
   }
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
-    armExtension.setdefaultCommand(controller::getRightX); // invert this to negative
+    armExtension.setdefaultCommand(
+        () -> MathUtil.applyDeadband(controller.getRightX(), config.getRightXDeadband()));
 
     controller.b().toggleOnTrue(armExtension.extensionPIDCommand());
     controller.x().onTrue(armExtension.resetExtensionEncoderCommand());

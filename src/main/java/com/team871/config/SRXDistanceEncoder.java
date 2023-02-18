@@ -1,6 +1,5 @@
 package com.team871.config;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
@@ -27,6 +26,6 @@ public class SRXDistanceEncoder implements DistanceEncoder {
 
   @Override
   public void reset() {
-    talon.getSensorCollection().setQuadraturePosition(0,0);
+    talon.getSensorCollection().setQuadraturePosition(0, 0);
   }
 }
