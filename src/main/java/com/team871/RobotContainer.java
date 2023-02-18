@@ -56,8 +56,8 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
-    shoulder = new Shoulder(config.getShoulderMotor());
-    wrist = new Wrist(config.getWristMotor());
+    shoulder = new Shoulder(config.getShoulderMotor(), config.getShoulderPitchEncoder());
+    wrist = new Wrist(config.getWristMotor(), config.getWristPitchEncoder());
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
@@ -115,8 +115,12 @@ public class RobotContainer {
   private void configureWristBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    wrist.setdefaultCommand(
-        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
+    wrist.setDefaultCommand(
+        wrist.wristPitchPIDCommand(() -> config.getShoulderPitchEncoder().getPitch()));
+    //        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
+
+    //    controller.y().whileTrue(wrist.wristPitchPIDCommand(() ->
+    // config.getShoulderPitchEncoder().getPitch()));
   }
 
   private void configureArmControllerBindings() {
