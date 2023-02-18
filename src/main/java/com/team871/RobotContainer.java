@@ -61,12 +61,13 @@ public class RobotContainer {
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
-    armExtension = new ArmExtension(config.getArmExtensionMotor());
+    armExtension = new ArmExtension(config.getArmExtensionMotor(), config.getExtensionEncoder());
 
     SmartDashboard.putData("DriveTrain", drivetrain);
-    SmartDashboard.putData("Arm", shoulder);
+    SmartDashboard.putData("Shoulder", shoulder);
     SmartDashboard.putData("Wrist", wrist);
     SmartDashboard.putData("Claw", claw);
+    SmartDashboard.putData("ArmExtension", armExtension);
     SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
     SmartDashboard.putData("extensionEncoderDistance", config.getExtensionEncoder());
@@ -108,7 +109,7 @@ public class RobotContainer {
   private void configureClawBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    claw.setDefaultCommand(controller::getRightX);
+    claw.setDefaultCommand(controller::getLeftX);
   }
 
   private void configureWristBindings() {
@@ -125,14 +126,17 @@ public class RobotContainer {
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
-    armExtension.setdefaultCommand(controller::getLeftX); // invert this to negative
+    armExtension.setdefaultCommand(controller::getRightX); // invert this to negative
+
+    controller.b().toggleOnTrue(armExtension.extensionPIDCommand());
+    controller.x().onTrue(armExtension.resetExtensionEncoderCommand());
   }
 
   private void configureIntakeBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    controller.a().whileTrue(intake.run(intake::pullIn));
-    controller.rightBumper().whileTrue(intake.run(intake::pullOut));
+    controller.rightBumper().whileTrue(intake.run(intake::pullIn));
+    controller.leftBumper().whileTrue(intake.run(intake::pullOut));
   }
 
   private void configureDrivetrainControllerBindings() {
