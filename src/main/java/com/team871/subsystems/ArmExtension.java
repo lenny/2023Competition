@@ -31,19 +31,19 @@ public class ArmExtension extends SubsystemBase {
   }
 
   public void moveExtension(final double output) {
-    SmartDashboard.putNumber("extensionMotorOutput", output);
+    SmartDashboard.putNumber("ArmExtensionMotorOutput", output);
     extensionMotor.set(output);
   }
 
   @Override
-  public void initSendable(SendableBuilder builder) {
+  public void initSendable(final SendableBuilder builder) {
     super.initSendable(builder);
 
     builder.addDoubleProperty(
         "distanceSetpoint", this::getPositionInchesSetpoint, this::setPositionInchesSetpoint);
   }
 
-  public void setdefaultCommand(Supplier<Double> extension) {
+  public void setDefaultCommand(final Supplier<Double> extension) {
     final Command command = run(() -> moveExtension(extension.get()));
     command.setName("ManualExtensionCommand");
     setDefaultCommand(command);
@@ -62,14 +62,16 @@ public class ArmExtension extends SubsystemBase {
   }
 
   public CommandBase resetExtensionEncoderCommand() {
-    return runOnce(distanceEncoder::reset);
+    final CommandBase command = runOnce(distanceEncoder::reset);
+    command.setName("resetExtensionEncoder");
+    return command;
   }
 
   public double getPositionInchesSetpoint() {
     return positionInchesSetpoint;
   }
 
-  public void setPositionInchesSetpoint(double positionInchesSetpoint) {
+  public void setPositionInchesSetpoint(final double positionInchesSetpoint) {
     this.positionInchesSetpoint = positionInchesSetpoint;
   }
 }

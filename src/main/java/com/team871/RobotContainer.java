@@ -146,7 +146,7 @@ public class RobotContainer {
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
-    armExtension.setdefaultCommand(
+    armExtension.setDefaultCommand(
         () -> MathUtil.applyDeadband(controller.getRightX(), config.getRightXDeadband()));
 
     controller.b().toggleOnTrue(armExtension.extendToSetpointCommand());
