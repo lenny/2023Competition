@@ -1,14 +1,12 @@
 package com.team871.subsystems;
 
-import java.util.function.Supplier;
-
 import com.team871.config.PitchEncoder;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.Supplier;
 
 public class Wrist extends SubsystemBase {
   public static double calculateLevelSetpoint(final double wristMountPitch) {

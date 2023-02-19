@@ -26,7 +26,8 @@ public class RobotConfig implements IRobot {
   private final PIDController balancePID;
 
   private final IGyro gyro;
-  private final DistanceEncoder extensionEncoder;
+
+  private final DistanceEncoder armExtensionEncoder;
   private final PitchEncoder wristPitchEncoder;
   private final PitchEncoder shoulderPitchEncoder;
 
@@ -85,11 +86,12 @@ public class RobotConfig implements IRobot {
 
     gyro = new Gyro();
 
-    extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
     /** up 90 degrees is 380 down 90 degrees is 900 */
     wristPitchEncoder = new SRXAnalogEncoderTalonSRX(wristMotor, 635, -.3529);
     /** down 90 is 1.5 and striaght out (0 degrees) is .68 */
     shoulderPitchEncoder = new SparkMaxAnalogEncoder(shoulderMotor, .68, -109.75);
+
+    armExtensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
   }
 
   @Override
@@ -128,8 +130,8 @@ public class RobotConfig implements IRobot {
   }
 
   @Override
-  public DistanceEncoder getExtensionEncoder() {
-    return extensionEncoder;
+  public DistanceEncoder getArmExtensionEncoder() {
+    return armExtensionEncoder;
   }
 
   @Override
