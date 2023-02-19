@@ -116,11 +116,8 @@ public class RobotContainer {
     final CommandXboxController controller = config.getArmController();
 
     wrist.setDefaultCommand(
-        wrist.wristPitchPIDCommand(() -> config.getShoulderPitchEncoder().getPitch()));
-    //        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
-
-    //    controller.y().whileTrue(wrist.wristPitchPIDCommand(() ->
-    // config.getShoulderPitchEncoder().getPitch()));
+        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()),
+        () -> shoulder.getPitch() + gyro.getPitch());
   }
 
   private void configureArmControllerBindings() {
