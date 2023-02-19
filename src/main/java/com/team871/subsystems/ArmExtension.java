@@ -26,8 +26,8 @@ public class ArmExtension extends SubsystemBase {
     this.extensionMotor = extensionMotor;
     this.extensionPID = new PIDController(EXTENSION_PID_KP, EXTENSION_PID_KI, EXTENSION_PID_KD);
     this.distanceEncoder = distanceEncoder;
-    SmartDashboard.putData("extensionPID", extensionPID);
-    SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
+    SmartDashboard.putData("ArmExtensionPID", extensionPID);
+    SmartDashboard.putData("ArmExtendToSetpointCommand", extendToSetpointCommand());
   }
 
   public void moveExtension(final double output) {
@@ -44,16 +44,12 @@ public class ArmExtension extends SubsystemBase {
   }
 
   public void setdefaultCommand(Supplier<Double> extension) {
-    final Command command =
-        run(
-            () -> {
-              moveExtension(extension.get());
-            });
+    final Command command = run(() -> moveExtension(extension.get()));
     command.setName("ManualExtensionCommand");
     setDefaultCommand(command);
   }
 
-  public CommandBase extensionPIDCommand() {
+  public CommandBase extendToSetpointCommand() {
     final CommandBase command =
         new PIDCommand(
             extensionPID,
@@ -61,8 +57,7 @@ public class ArmExtension extends SubsystemBase {
             this::getPositionInchesSetpoint,
             this::moveExtension,
             this);
-
-    command.setName("PIDExtensionCommand");
+    command.setName("ExtendToSetpoint");
     return command;
   }
 
