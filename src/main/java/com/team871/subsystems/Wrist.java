@@ -37,8 +37,7 @@ public class Wrist extends SubsystemBase {
     this.wristMotor = wristMotor;
     this.pitchPID = new PIDController(PITCH_PID_KP, PITCH_PID_KI, PITCH_PID_KD);
     this.pitchEncoder = pitchEncoder;
-    SmartDashboard.putData("wristPitchPID", pitchPID);
-    SmartDashboard.putData("wristPitchPIDCommand", wristPitchPIDCommand());
+    SmartDashboard.putData("WristPitchPID", pitchPID);
   }
 
   public void moveWristPitch(final double output) {
