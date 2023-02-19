@@ -26,34 +26,30 @@ public class ArmExtension extends SubsystemBase {
     this.extensionMotor = extensionMotor;
     this.extensionPID = new PIDController(EXTENSION_PID_KP, EXTENSION_PID_KI, EXTENSION_PID_KD);
     this.distanceEncoder = distanceEncoder;
-    SmartDashboard.putData("extensionPID", extensionPID);
-    SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
+    SmartDashboard.putData("ArmExtensionPID", extensionPID);
+    SmartDashboard.putData("ArmExtendToSetpointCommand", extendToSetpointCommand());
   }
 
   public void moveExtension(final double output) {
-    SmartDashboard.putNumber("extensionMotorOutput", output);
+    SmartDashboard.putNumber("ArmExtensionMotorOutput", output);
     extensionMotor.set(output);
   }
 
   @Override
-  public void initSendable(SendableBuilder builder) {
+  public void initSendable(final SendableBuilder builder) {
     super.initSendable(builder);
 
     builder.addDoubleProperty(
         "distanceSetpoint", this::getPositionInchesSetpoint, this::setPositionInchesSetpoint);
   }
 
-  public void setdefaultCommand(Supplier<Double> extension) {
-    final Command command =
-        run(
-            () -> {
-              moveExtension(extension.get());
-            });
+  public void setDefaultCommand(final Supplier<Double> extension) {
+    final Command command = run(() -> moveExtension(extension.get()));
     command.setName("ManualExtensionCommand");
     setDefaultCommand(command);
   }
 
-  public CommandBase extensionPIDCommand() {
+  public CommandBase extendToSetpointCommand() {
     final CommandBase command =
         new PIDCommand(
             extensionPID,
@@ -61,20 +57,21 @@ public class ArmExtension extends SubsystemBase {
             this::getPositionInchesSetpoint,
             this::moveExtension,
             this);
-
-    command.setName("PIDExtensionCommand");
+    command.setName("ExtendToSetpoint");
     return command;
   }
 
   public CommandBase resetExtensionEncoderCommand() {
-    return runOnce(distanceEncoder::reset);
+    final CommandBase command = runOnce(distanceEncoder::reset);
+    command.setName("resetExtensionEncoder");
+    return command;
   }
 
   public double getPositionInchesSetpoint() {
     return positionInchesSetpoint;
   }
 
-  public void setPositionInchesSetpoint(double positionInchesSetpoint) {
+  public void setPositionInchesSetpoint(final double positionInchesSetpoint) {
     this.positionInchesSetpoint = positionInchesSetpoint;
   }
 }

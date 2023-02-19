@@ -5,12 +5,16 @@
 
 package com.team871;
 
+import com.team871.config.DistanceEncoder;
 import com.team871.config.Gyro;
 import com.team871.config.IGyro;
 import com.team871.config.IRobot;
+import com.team871.config.PitchEncoder;
 import com.team871.config.RobotConfig;
-import com.team871.config.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
+import com.team871.simulation.SimulationDistanceEncoder;
+import com.team871.simulation.SimulationGyro;
+import com.team871.simulation.SimulationPitchEncoder;
 import com.team871.subsystems.ArmExtension;
 import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
@@ -56,17 +60,30 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
-    shoulder = new Shoulder(config.getShoulderMotor(), config.getShoulderPitchEncoder());
-    wrist = new Wrist(config.getWristMotor(), config.getWristPitchEncoder());
+    PitchEncoder shoulderPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getShoulderPitchEncoder();
+    shoulder = new Shoulder(config.getShoulderMotor(), shoulderPitchEncoder);
+
+    PitchEncoder wristPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
+    wrist = new Wrist(config.getWristMotor(), wristPitchEncoder);
+
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
-    armExtension = new ArmExtension(config.getArmExtensionMotor(), config.getExtensionEncoder());
+    DistanceEncoder armExtensionDistanceEncoder =
+        RobotBase.isSimulation()
+            ? new SimulationDistanceEncoder()
+            : config.getArmExtensionEncoder();
+    armExtension = new ArmExtension(config.getArmExtensionMotor(), armExtensionDistanceEncoder);
 
     SmartDashboard.putData("DriveTrain", drivetrain);
     SmartDashboard.putData("Shoulder", shoulder);
+    SmartDashboard.putData("ShoulderPitchEncoder", shoulderPitchEncoder);
     SmartDashboard.putData("Wrist", wrist);
+    SmartDashboard.putData("WristPitchEncoder", wristPitchEncoder);
     SmartDashboard.putData("Claw", claw);
+    SmartDashboard.putData("ArmExtensionDistanceEncoder", armExtensionDistanceEncoder);
     SmartDashboard.putData("ArmExtension", armExtension);
     SmartDashboard.putData("Gyro", gyro);
     SmartDashboard.putData("DriveTrainTest", new DriveTrainExtensions(drivetrain));
@@ -116,26 +133,23 @@ public class RobotContainer {
     final CommandXboxController controller = config.getArmController();
 
     wrist.setDefaultCommand(
-        wrist.wristPitchPIDCommand(() -> config.getShoulderPitchEncoder().getPitch()));
-    //        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
-
-    //    controller.y().whileTrue(wrist.wristPitchPIDCommand(() ->
-    // config.getShoulderPitchEncoder().getPitch()));
+        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()),
+        () -> shoulder.getPitch() + gyro.getPitch());
   }
 
   private void configureArmControllerBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    shoulder.setdefaultCommand(
+    shoulder.setDefaultCommand(
         () -> MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()));
   }
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
-    armExtension.setdefaultCommand(
+    armExtension.setDefaultCommand(
         () -> MathUtil.applyDeadband(controller.getRightX(), config.getRightXDeadband()));
 
-    controller.b().toggleOnTrue(armExtension.extensionPIDCommand());
+    controller.b().toggleOnTrue(armExtension.extendToSetpointCommand());
     controller.x().onTrue(armExtension.resetExtensionEncoderCommand());
   }
 

@@ -48,7 +48,7 @@ public interface IRobot {
 
   PIDController getBalancePID();
 
-  DistanceEncoder getExtensionEncoder();
+  DistanceEncoder getArmExtensionEncoder();
 
   PitchEncoder getWristPitchEncoder();
 
