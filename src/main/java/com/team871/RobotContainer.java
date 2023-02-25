@@ -116,11 +116,15 @@ public class RobotContainer {
     final CommandXboxController controller = config.getArmController();
 
     wrist.setDefaultCommand(
-        wrist.wristPitchPIDCommand(() -> config.getShoulderPitchEncoder().getPitch()));
+        wrist.wristPitchPIDCommand(() -> {
+          final double targetPosition = config.getShoulderPitchEncoder().getPitch();
+          final double offsetValue = (MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()))*(config.getOffsetWristValue());
+          return targetPosition + offsetValue;
+        }));
     //        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
 
     //    controller.y().whileTrue(wrist.wristPitchPIDCommand(() ->
-    // config.getShoulderPitchEncoder().getPitch()));
+    // config.getShoulderPitchEncoder().getPitch() + controller.g));
   }
 
   private void configureArmControllerBindings() {
