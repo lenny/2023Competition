@@ -50,6 +50,10 @@ public interface IRobot {
 
   DistanceEncoder getExtensionEncoder();
 
+  PitchEncoder getWristPitchEncoder();
+
+  PitchEncoder getShoulderPitchEncoder();
+
   double getLeftXDeadband();
 
   double getLeftYDeadband();
