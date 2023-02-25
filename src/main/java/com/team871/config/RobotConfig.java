@@ -34,6 +34,7 @@ public class RobotConfig implements IRobot {
   private final double leftYDeadband = .09;
   private final double rightXDeadband = .09;
   private final double rightYDeadband = .09;
+  private final double offsetWristValue = .1;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -196,4 +197,10 @@ public class RobotConfig implements IRobot {
   public CommandXboxController getArmController() {
     return armController;
   }
+
+@Override
+public double getOffsetWristValue() {
+	// TODO Auto-generated method stub
+	return offsetWristValue;
+}
 }
