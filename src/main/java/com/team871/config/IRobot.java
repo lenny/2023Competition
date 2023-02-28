@@ -61,4 +61,6 @@ public interface IRobot {
   double getRightXDeadband();
 
   double getRightYDeadband();
+
+  double getOffsetWristValue();
 }
