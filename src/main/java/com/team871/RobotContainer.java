@@ -9,7 +9,7 @@ import com.team871.config.Gyro;
 import com.team871.config.IGyro;
 import com.team871.config.IRobot;
 import com.team871.config.RobotConfig;
-import com.team871.config.SimulationGyro;
+import com.team871.config.simulation.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
 import com.team871.subsystems.ArmExtension;
 import com.team871.subsystems.Claw;

@@ -1,4 +1,6 @@
-package com.team871.config;
+package com.team871.config.simulation;
+
+import com.team871.config.IGyro;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
