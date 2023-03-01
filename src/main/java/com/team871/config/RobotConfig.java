@@ -34,7 +34,9 @@ public class RobotConfig implements IRobot {
   private final double leftYDeadband = .09;
   private final double rightXDeadband = .09;
   private final double rightYDeadband = .09;
-  private final double offsetWristValue = .1;
+
+  private final double maxWristOffsetValue = 10;
+  private final double maxShoulderOffsetValue = 20;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -90,7 +92,7 @@ public class RobotConfig implements IRobot {
     /** up 90 degrees is 380 down 90 degrees is 900 */
     wristPitchEncoder = new SRXAnalogEncoderTalonSRX(wristMotor, 635, -.3529);
     /** down 90 is 1.5 and striaght out (0 degrees) is .68 */
-    shoulderPitchEncoder = new SparkMaxAnalogEncoder(shoulderMotor, .68, -109.75);
+    shoulderPitchEncoder = new SparkMaxAnalogEncoder(shoulderMotor, .68, 1);
   }
 
   @Override
@@ -198,9 +200,17 @@ public class RobotConfig implements IRobot {
     return armController;
   }
 
-@Override
-public double getOffsetWristValue() {
-	// TODO Auto-generated method stub
-	return offsetWristValue;
-}
+  @Override
+  public double getMaxOffsetWristValue() {
+    // TODO Auto-generated method stub
+    return maxWristOffsetValue;
+  }
+
+  @Override
+  public double getMaxOffsetShoulderValue() {
+    // TODO Auto-generated method stub
+    return maxShoulderOffsetValue;
+  }
+
+
 }
