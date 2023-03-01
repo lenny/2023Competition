@@ -8,9 +8,11 @@ package com.team871;
 import com.team871.config.Gyro;
 import com.team871.config.IGyro;
 import com.team871.config.IRobot;
+import com.team871.config.PitchEncoder;
 import com.team871.config.RobotConfig;
-import com.team871.config.simulation.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
+import com.team871.simulation.SimulationGyro;
+import com.team871.simulation.SimulationPitchEncoder;
 import com.team871.subsystems.ArmExtension;
 import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
@@ -55,17 +57,17 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
+    final PitchEncoder shoulderPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getShoulderPitchEncoder();
+
     shoulder =
         new PitchSubsystem(
-            config.getShoulderMotor(),
-            config.getShoulderPitchEncoder(),
-            0.032,
-            0,
-            0,
-            "Shoulder");
-    wrist =
-        new PitchSubsystem(
-            config.getWristMotor(), config.getWristPitchEncoder(), 0.048, 0, 0, "Wrist");
+            config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder");
+
+    final PitchEncoder wristPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
+
+    wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist");
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
@@ -140,16 +142,15 @@ public class RobotContainer {
     shoulder.setDefaultCommand(
         shoulder.pitchPIDCommand(
             () -> {
-              
               final double targetPosition = controller.getLeftY();
-              return (targetPosition*45) + 45;
+              return (targetPosition * 45) + 45;
               // final double targetPosition = controller.ge
               // final double offsetValue =
               //     (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
               //         * (config.getMaxOffsetShoulderValue());
-              // return targetPosition 
+              // return targetPosition
               // + offsetValue;
-              
+
             }));
   }
 

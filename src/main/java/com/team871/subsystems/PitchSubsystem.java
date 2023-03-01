@@ -39,8 +39,8 @@ public class PitchSubsystem extends SubsystemBase {
     this.subsystemName = subsystemName;
     SmartDashboard.putData(subsystemName + "-PitchPID", pitchPID);
     SmartDashboard.putData(subsystemName + "-PitchEncoder", pitchEncoder);
-    SmartDashboard.putData(subsystemName+ "-DisableMotorsCommand", disableMotors());
-    SmartDashboard.putData(subsystemName+ "-EnableMotorsCommand", enableMotors());
+    SmartDashboard.putData(subsystemName + "-DisableMotorsCommand", disableMotors());
+    SmartDashboard.putData(subsystemName + "-EnableMotorsCommand", enableMotors());
   }
 
   public void movePitch(final double output) {
