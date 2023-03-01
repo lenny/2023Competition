@@ -35,8 +35,12 @@ public class RobotConfig implements IRobot {
   private final double rightXDeadband = .09;
   private final double rightYDeadband = .09;
 
-  private final double maxWristOffsetValue = 10;
   private final double maxShoulderOffsetValue = 20;
+  private static final double shoulderZero = 2.055;
+  private static final double shoulderNegative90Value = 2.7935;
+
+  private final double maxWristOffsetValue = 10;
+  private static final double wristZeroOffset = -635;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -60,7 +64,7 @@ public class RobotConfig implements IRobot {
     rearRight.setInverted(true);
 
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-    shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     shoulderMotor.setInverted(true);
 
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -73,6 +77,7 @@ public class RobotConfig implements IRobot {
 
     wristMotor = new WPI_TalonSRX(10);
     wristMotor.setNeutralMode(NeutralMode.Coast);
+    wristMotor.setInverted(true);
 
     clawMotor = new WPI_TalonSRX(9);
     clawMotor.setNeutralMode(NeutralMode.Coast);
@@ -89,10 +94,16 @@ public class RobotConfig implements IRobot {
     gyro = new Gyro();
 
     extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
-    /** up 90 degrees is 380 down 90 degrees is 900 */
-    wristPitchEncoder = new SRXAnalogEncoderTalonSRX(wristMotor, 635, -.3529);
+    /**
+     * up 90 degrees is 380 down 90 degrees is 900, original value for degrees per tick was -.3529
+     */
+    final double wristDegreesPerTick = 180.0d / (380.0d - 900.0d);
+    wristPitchEncoder =
+        new SRXAnalogEncoderTalonSRX(wristMotor, wristZeroOffset, wristDegreesPerTick);
     /** down 90 is 1.5 and striaght out (0 degrees) is .68 */
-    shoulderPitchEncoder = new SparkMaxAnalogEncoder(shoulderMotor, .68, 1);
+    final double shoulderDegreesPerVolt = 90 / (shoulderNegative90Value - shoulderZero);
+    shoulderPitchEncoder =
+        new SparkMaxAnalogEncoder(shoulderMotor, shoulderZero, shoulderDegreesPerVolt);
   }
 
   @Override
@@ -211,6 +222,4 @@ public class RobotConfig implements IRobot {
     // TODO Auto-generated method stub
     return maxShoulderOffsetValue;
   }
-
-
 }
