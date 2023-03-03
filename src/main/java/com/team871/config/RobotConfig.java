@@ -45,22 +45,22 @@ public class RobotConfig implements IRobot {
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
     frontLeft = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    frontLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    frontLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
     frontLeft.setInverted(false);
 
     /* sets front right motor to CanSparkMax motor controller with device id 2 */
     frontRight = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    frontRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    frontRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
     frontRight.setInverted(true);
 
     /* sets rear left motor to CanSparkMax motor controller with device id 3 */
     rearLeft = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rearLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rearLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rearLeft.setInverted(false);
 
     /* sets rear right motor to CanSparkMax motor controller with device id 4 */
     rearRight = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rearRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rearRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rearRight.setInverted(true);
 
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);

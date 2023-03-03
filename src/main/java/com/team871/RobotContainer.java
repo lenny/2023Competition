@@ -116,7 +116,7 @@ public class RobotContainer {
   }
 
   private void configureClawBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     claw.setDefaultCommand(
         () -> MathUtil.applyDeadband(controller.getLeftTriggerAxis(), config.getLeftXDeadband()));
@@ -142,15 +142,12 @@ public class RobotContainer {
     shoulder.setDefaultCommand(
         shoulder.pitchPIDCommand(
             () -> {
-              final double targetPosition = controller.getLeftY();
-              return (targetPosition * 45) + 45;
-              // final double targetPosition = controller.ge
-              // final double offsetValue =
-              //     (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
-              //         * (config.getMaxOffsetShoulderValue());
-              // return targetPosition
-              // + offsetValue;
-
+              final double targetPosition = config.getShoulderPitchEncoder().getPitch();
+              //       return (targetPosition * 45) + 70;
+              final double offsetValue =
+                  (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
+                      * (config.getMaxOffsetShoulderValue());
+              return targetPosition + offsetValue;
             }));
   }
 
@@ -164,7 +161,7 @@ public class RobotContainer {
   }
 
   private void configureIntakeBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     controller.rightBumper().whileTrue(intake.run(intake::pullIn));
     controller.leftBumper().whileTrue(intake.run(intake::pullOut));
