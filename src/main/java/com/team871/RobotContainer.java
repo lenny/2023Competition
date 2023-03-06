@@ -62,12 +62,12 @@ public class RobotContainer {
 
     shoulder =
         new PitchSubsystem(
-            config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder");
+            config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder", 0.3, 1);
 
     final PitchEncoder wristPitchEncoder =
         RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
 
-    wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist");
+    wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist", -1, 1);
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
@@ -108,7 +108,7 @@ public class RobotContainer {
     System.out.println("configure bindings");
 
     configureDrivetrainControllerBindings();
-    configureArmControllerBindings();
+    configureShoulderBindings();
     configureClawBindings();
     configureWristBindings();
     configureIntakeBindings();
@@ -136,7 +136,7 @@ public class RobotContainer {
             }));
   }
 
-  private void configureArmControllerBindings() {
+  private void configureShoulderBindings() {
     final CommandXboxController controller = config.getArmController();
 
     shoulder.setDefaultCommand(
