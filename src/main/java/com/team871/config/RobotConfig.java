@@ -36,11 +36,19 @@ public class RobotConfig implements IRobot {
   private final double rightYDeadband = .09;
 
   private final double maxShoulderOffsetValue = 20;
-  private static final double shoulderZero = 2.055;
-  private static final double shoulderNegative90Value = 2.7935;
+  private static final double shoulderZero = 1.44;
+  private static final double shoulderNegative90Value = 2.2478;
 
   private final double maxWristOffsetValue = 10;
   private static final double wristZeroOffset = -635;
+
+  private static final double topShoulderSetpoint = 120;
+  private static final double middleShoulderSetpoint = 45;
+  private static final double bottomShoulderSetpoint = 0;
+  private static final double topExtensionSetpoint = 5;
+  private static final double middleExtensionSetpoint = 6;
+  private static final double bottomExtensionSetpoint = 7;
+  
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -93,7 +101,7 @@ public class RobotConfig implements IRobot {
 
     gyro = new Gyro();
 
-    extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
+    extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00007005);
     /**
      * up 90 degrees is 380 down 90 degrees is 900, original value for degrees per tick was -.3529
      */
@@ -221,5 +229,41 @@ public class RobotConfig implements IRobot {
   public double getMaxOffsetShoulderValue() {
     // TODO Auto-generated method stub
     return maxShoulderOffsetValue;
+  }
+
+  @Override
+  public double getTopShoulderSetpoint() {
+    // TODO Auto-generated method stub
+    return topShoulderSetpoint;
+  }
+
+  @Override
+  public double getMiddleShoulderSetpoint() {
+    // TODO Auto-generated method stub
+    return middleShoulderSetpoint;
+  }
+
+  @Override
+  public double getBottomShoulderSetpoint() {
+    // TODO Auto-generated method stub
+    return bottomShoulderSetpoint;
+  }
+
+  @Override
+  public double getTopExtensionSetpoint() {
+    // TODO Auto-generated method stub
+    return topExtensionSetpoint;
+  }
+
+  @Override
+  public double getMiddleExtensionSetpoint() {
+    // TODO Auto-generated method stub
+    return middleExtensionSetpoint;
+  }
+
+  @Override
+  public double getBottomExtensionSetpoint() {
+    // TODO Auto-generated method stub
+    return bottomExtensionSetpoint;
   }
 }

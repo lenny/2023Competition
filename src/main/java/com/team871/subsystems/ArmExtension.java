@@ -28,6 +28,8 @@ public class ArmExtension extends SubsystemBase {
     this.distanceEncoder = distanceEncoder;
     SmartDashboard.putData("extensionPID", extensionPID);
     SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
+    SmartDashboard.putData("extensionEncoder", distanceEncoder);
+    SmartDashboard.putData("resetCommand",resetExtensionEncoderCommand());
   }
 
   public void moveExtension(final double output) {

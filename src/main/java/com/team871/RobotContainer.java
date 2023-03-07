@@ -60,6 +60,7 @@ public class RobotContainer {
     final PitchEncoder shoulderPitchEncoder =
         RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getShoulderPitchEncoder();
 
+        /**-90 is fully up, 0 is parallel to the ground, 90 is fully down. Down is negative motor output */
     shoulder =
         new PitchSubsystem(
             config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder");
@@ -67,6 +68,7 @@ public class RobotContainer {
     final PitchEncoder wristPitchEncoder =
         RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
 
+      /**90 is fully up, 0 is parallel to the ground, -90 is fully down. Down is positive motor output */
     wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist");
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());

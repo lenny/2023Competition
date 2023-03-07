@@ -28,8 +28,14 @@ public class SparkMaxAnalogEncoder implements PitchEncoder {
   }
 
   @Override
+  public double getRawValue() {
+    return CANSparkMax.getAnalog(SparkMaxAnalogSensor.Mode.kAbsolute).getPosition();
+  }
+
+  @Override
   public void initSendable(SendableBuilder builder) {
     builder.addDoubleProperty("pitch", this::getPitch, null);
+    builder.addDoubleProperty("rawValue", this::getRawValue, null);
   }
 
   @Override
