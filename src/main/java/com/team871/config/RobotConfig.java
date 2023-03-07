@@ -42,12 +42,12 @@ public class RobotConfig implements IRobot {
   private final double maxWristOffsetValue = 10;
   private static final double wristZeroOffset = -635;
 
-  private static final double topShoulderSetpoint = 120;
-  private static final double middleShoulderSetpoint = 45;
-  private static final double bottomShoulderSetpoint = 0;
-  private static final double topExtensionSetpoint = 5;
-  private static final double middleExtensionSetpoint = 6;
-  private static final double bottomExtensionSetpoint = 7;
+  private static final double topShoulderSetpoint = -2.7;
+  private static final double middleShoulderSetpoint = 16.2;
+  private static final double bottomShoulderSetpoint = 62;
+  private static final double topExtensionSetpoint = 19;
+  private static final double middleExtensionSetpoint = 4.63;
+  private static final double bottomExtensionSetpoint = 15.274;
   
 
   public RobotConfig() {

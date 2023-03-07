@@ -145,24 +145,67 @@ public class RobotContainer {
         shoulder.pitchPIDCommand(
             () -> {
               final double targetPosition = controller.getLeftY();
-              return (targetPosition * 45) + 45;
-              // final double targetPosition = controller.ge
-              // final double offsetValue =
-              //     (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
-              //         * (config.getMaxOffsetShoulderValue());
-              // return targetPosition
-              // + offsetValue;
-
+              return (targetPosition*45) + 62;
             }));
+
+        controller.b().toggleOnTrue(shoulder.pitchPIDCommand(
+          () -> {
+            final double targetPosition = config.getTopShoulderSetpoint();
+            final double offsetValue =
+                (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
+                    * (config.getMaxOffsetShoulderValue());
+            return targetPosition
+            + offsetValue;
+
+          }));
+
+          controller.a().toggleOnTrue(shoulder.pitchPIDCommand(
+            () -> {
+              final double targetPosition = config.getMiddleShoulderSetpoint();
+              final double offsetValue =
+                  (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
+                      * (config.getMaxOffsetShoulderValue());
+              return targetPosition
+              + offsetValue;
+  
+            }));
+
+            controller.x().toggleOnTrue(shoulder.pitchPIDCommand(
+              () -> {
+                final double targetPosition = config.getBottomShoulderSetpoint();
+                final double offsetValue =
+                    (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
+                        * (config.getMaxOffsetShoulderValue());
+                return targetPosition
+                + offsetValue;
+    
+              }));
   }
+
 
   private void configureArmExtensionBindings() {
     final CommandXboxController controller = config.getArmController();
+
     armExtension.setdefaultCommand(
         () -> MathUtil.applyDeadband(controller.getRightX(), config.getRightXDeadband()));
 
-    controller.b().toggleOnTrue(armExtension.extensionPIDCommand());
-    controller.x().onTrue(armExtension.resetExtensionEncoderCommand());
+    controller.b().toggleOnTrue(armExtension.extensionPIDCommand(() -> {
+      final double targetPosition = config.getTopExtensionSetpoint();
+      return targetPosition;
+    }
+    ));
+
+    controller.a().toggleOnTrue(armExtension.extensionPIDCommand(() -> {
+      final double targetPosition = config.getMiddleExtensionSetpoint();
+      return targetPosition;
+    }
+    ));
+
+    controller.x().toggleOnTrue(armExtension.extensionPIDCommand(() -> {
+      final double targetPosition = config.getBottomExtensionSetpoint();
+      return targetPosition;
+    }
+    ));
   }
 
   private void configureIntakeBindings() {

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class ArmExtension extends SubsystemBase {
@@ -27,7 +29,7 @@ public class ArmExtension extends SubsystemBase {
     this.extensionPID = new PIDController(EXTENSION_PID_KP, EXTENSION_PID_KI, EXTENSION_PID_KD);
     this.distanceEncoder = distanceEncoder;
     SmartDashboard.putData("extensionPID", extensionPID);
-    SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
+    // SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
     SmartDashboard.putData("extensionEncoder", distanceEncoder);
     SmartDashboard.putData("resetCommand",resetExtensionEncoderCommand());
   }
@@ -55,12 +57,12 @@ public class ArmExtension extends SubsystemBase {
     setDefaultCommand(command);
   }
 
-  public CommandBase extensionPIDCommand() {
+  public CommandBase extensionPIDCommand(DoubleSupplier setpointSupplier) {
     final CommandBase command =
         new PIDCommand(
             extensionPID,
             distanceEncoder::getDistance,
-            this::getPositionInchesSetpoint,
+            setpointSupplier,
             this::moveExtension,
             this);
 
@@ -76,7 +78,7 @@ public class ArmExtension extends SubsystemBase {
     return positionInchesSetpoint;
   }
 
-  public void setPositionInchesSetpoint(double positionInchesSetpoint) {
-    this.positionInchesSetpoint = positionInchesSetpoint;
+  public double setPositionInchesSetpoint(double positionInchesSetpoint) {
+    return positionInchesSetpoint;
   }
 }

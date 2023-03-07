@@ -65,4 +65,16 @@ public interface IRobot {
   double getMaxOffsetWristValue();
 
   double getMaxOffsetShoulderValue();
+
+  double getTopShoulderSetpoint();
+
+  double getMiddleShoulderSetpoint();
+
+  double getBottomShoulderSetpoint();
+
+  double getTopExtensionSetpoint();
+
+  double getMiddleExtensionSetpoint();
+
+  double getBottomExtensionSetpoint();
 }
