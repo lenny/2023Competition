@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 
 public class PitchSubsystem extends SubsystemBase {
-  private final MotorController wristMotor;
+  private final MotorController motor;
   private final PIDController pitchPID;
   private final PitchEncoder pitchEncoder;
   private double positionThetaSetpointTest;
@@ -57,7 +57,7 @@ public class PitchSubsystem extends SubsystemBase {
       // wristMotor.set(output);
       wristMotor.set(clampedOutput);
     } else {
-      wristMotor.set(0);
+      motor.set(0);
     }
     SmartDashboard.putNumber(subsystemName + "-motorOutput", clampedOutput);
   }
@@ -78,6 +78,7 @@ public class PitchSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "ThetaSetpoint", this::getPositionThetaSetpointTest, this::setPositionThetaSetpointTest);
     builder.addBooleanProperty("motorsEnabled", this::getMotorsEnabled, this::setMotorsEnabled);
+    builder.addDoubleProperty("directMotorOutput", this::getDirectMotorOutputTest, this::setDirectMotorOutputTest);
   }
 
   public CommandBase pitchPIDCommand(DoubleSupplier setpointSupplier) {
@@ -87,7 +88,7 @@ public class PitchSubsystem extends SubsystemBase {
     command.setName("PitchCommand");
     return command;
   }
-
+  // jules waz here =)
   public double getPositionThetaSetpointTest() {
     return positionThetaSetpointTest;
   }
@@ -102,5 +103,9 @@ public class PitchSubsystem extends SubsystemBase {
 
   public CommandBase enableMotors() {
     return runOnce(() -> motorsEnabled = true);
+  }
+
+  public CommandBase setOutputTest() {
+    return run(()-> this.motor.set(directMotorOutputTest));
   }
 }

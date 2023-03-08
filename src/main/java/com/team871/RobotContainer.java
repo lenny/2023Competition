@@ -122,7 +122,7 @@ public class RobotContainer {
     System.out.println("configure bindings");
 
     configureDrivetrainControllerBindings();
-    configureArmControllerBindings();
+    configureShoulderBindings();
     configureClawBindings();
     configureWristBindings();
     configureIntakeBindings();
@@ -130,7 +130,7 @@ public class RobotContainer {
   }
 
   private void configureClawBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     claw.setDefaultCommand(
         () -> MathUtil.applyDeadband(controller.getLeftTriggerAxis(), config.getLeftXDeadband()));
@@ -150,7 +150,7 @@ public class RobotContainer {
             }));
   }
 
-  private void configureArmControllerBindings() {
+  private void configureShoulderBindings() {
     final CommandXboxController controller = config.getArmController();
 
     shoulder.setDefaultCommand(
@@ -232,7 +232,7 @@ public class RobotContainer {
   }
 
   private void configureIntakeBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     controller.rightBumper().whileTrue(intake.run(intake::pullIn));
     controller.leftBumper().whileTrue(intake.run(intake::pullOut));
