@@ -16,7 +16,7 @@ public class SparkMaxAnalogEncoder implements PitchEncoder {
     this.zeroOffset = zeroOffset;
     this.degreesPerVolt = degreesPerVolt;
   }
-  // this is a test method
+
   public double calculateDegrees(double rawInput) {
     return (rawInput - zeroOffset) * degreesPerVolt;
   }
