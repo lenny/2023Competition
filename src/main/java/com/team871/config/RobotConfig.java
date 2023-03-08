@@ -1,5 +1,7 @@
 package com.team871.config;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -43,12 +45,18 @@ public class RobotConfig implements IRobot {
   private static final double wristZeroOffset = -635;
 
   private static final double topShoulderSetpoint = -2.7;
-  private static final double middleShoulderSetpoint = 16.2;
+  /** formerly 16.2 */
+  private static final double middleShoulderSetpoint = 20.2;
+  /** formerly 62 */
   private static final double bottomShoulderSetpoint = 62;
+
   private static final double topExtensionSetpoint = 19;
   private static final double middleExtensionSetpoint = 4.63;
   private static final double bottomExtensionSetpoint = 15.274;
-  
+  private static final double restOnFrameSetpoint = 62;
+
+  private static final double lowClamp = .05;
+  private static final double highClamp = -1;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -74,6 +82,7 @@ public class RobotConfig implements IRobot {
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     shoulderMotor.setInverted(true);
+    /**TODO set limit switches */
 
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     leftIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -91,9 +100,11 @@ public class RobotConfig implements IRobot {
     clawMotor.setNeutralMode(NeutralMode.Coast);
 
     armExtensionMotor = new WPI_TalonSRX(8);
-    armExtensionMotor.setNeutralMode(NeutralMode.Coast);
+    armExtensionMotor.setNeutralMode(NeutralMode.Brake);
     armExtensionMotor.setInverted(true);
-
+    armExtensionMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configClearPositionOnLimitR(true, 0);
     drivetrainController = new CommandXboxController(0);
     armController = new CommandXboxController(1);
 
@@ -221,49 +232,57 @@ public class RobotConfig implements IRobot {
 
   @Override
   public double getMaxOffsetWristValue() {
-    // TODO Auto-generated method stub
     return maxWristOffsetValue;
   }
 
   @Override
   public double getMaxOffsetShoulderValue() {
-    // TODO Auto-generated method stub
     return maxShoulderOffsetValue;
   }
 
   @Override
   public double getTopShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return topShoulderSetpoint;
   }
 
   @Override
   public double getMiddleShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return middleShoulderSetpoint;
   }
 
   @Override
   public double getBottomShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return bottomShoulderSetpoint;
   }
 
   @Override
   public double getTopExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return topExtensionSetpoint;
   }
 
   @Override
   public double getMiddleExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return middleExtensionSetpoint;
   }
 
   @Override
   public double getBottomExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return bottomExtensionSetpoint;
   }
+
+  @Override
+  public double getShoulderLowClampValue() {
+    return lowClamp;
+  }
+
+  @Override
+  public double getShoulderHighClampValue() {
+    return highClamp;
+  }
+
+  @Override
+  public double getRestOnFrameSetpoint() {
+    return restOnFrameSetpoint;
+  }
+
 }

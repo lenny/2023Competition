@@ -1,6 +1,7 @@
 package com.team871.subsystems;
 
 import com.team871.config.PitchEncoder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -17,6 +18,8 @@ public class PitchSubsystem extends SubsystemBase {
   private double positionThetaSetpointTest;
   private String subsystemName;
   private boolean motorsEnabled = true;
+  private final double lowClamp;
+  private final double highClamp;
 
   public void setMotorsEnabled(boolean motorsEnabled) {
     this.motorsEnabled = motorsEnabled;
@@ -32,11 +35,15 @@ public class PitchSubsystem extends SubsystemBase {
       double kp,
       double ki,
       double kd,
-      String subsystemName) {
+      final double lowClamp,
+      final double highClamp,
+      final String subsystemName) {
     this.wristMotor = motor;
     this.pitchPID = new PIDController(kp, ki, kd);
     this.pitchEncoder = pitchEncoder;
     this.subsystemName = subsystemName;
+    this.lowClamp = lowClamp;
+    this.highClamp = highClamp;
     SmartDashboard.putData(subsystemName + "-PitchPID", pitchPID);
     SmartDashboard.putData(subsystemName + "-PitchEncoder", pitchEncoder);
     SmartDashboard.putData(subsystemName + "-DisableMotorsCommand", disableMotors());
@@ -44,12 +51,15 @@ public class PitchSubsystem extends SubsystemBase {
   }
 
   public void movePitch(final double output) {
+    double clampedOutput = MathUtil.clamp(output, lowClamp, highClamp);
+    // double clampedOutput = output;
     if (motorsEnabled) {
-      wristMotor.set(output);
+      // wristMotor.set(output);
+      wristMotor.set(clampedOutput);
     } else {
       wristMotor.set(0);
     }
-    SmartDashboard.putNumber(subsystemName + "-motorOutput", output);
+    SmartDashboard.putNumber(subsystemName + "-motorOutput", clampedOutput);
   }
 
   public boolean isMotorsEnabled() {
