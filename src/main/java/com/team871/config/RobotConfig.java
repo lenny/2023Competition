@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotConfig implements IRobot {
   private final CANSparkMax frontLeft;
@@ -20,20 +19,12 @@ public class RobotConfig implements IRobot {
   private final WPI_TalonSRX clawMotor;
   private final WPI_TalonSRX armExtensionMotor;
 
-  private final CommandXboxController drivetrainController;
-  private final CommandXboxController armController;
-
   private final PIDController balancePID;
 
   private final IGyro gyro;
   private final DistanceEncoder extensionEncoder;
   private final PitchEncoder wristPitchEncoder;
   private final PitchEncoder shoulderPitchEncoder;
-
-  private final double leftXDeadband = .09;
-  private final double leftYDeadband = .09;
-  private final double rightXDeadband = .09;
-  private final double rightYDeadband = .09;
 
   private final double maxShoulderOffsetValue = 20;
   private static final double shoulderZero = 1.44;
@@ -76,39 +67,34 @@ public class RobotConfig implements IRobot {
     shoulderMotor.setInverted(true);
 
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    leftIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    leftIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftIntakeMotor.setInverted(true);
 
     rightIntakeMotor = new CANSparkMax(7, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rightIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rightIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rightIntakeMotor.setInverted(false);
 
     wristMotor = new WPI_TalonSRX(10);
-    wristMotor.setNeutralMode(NeutralMode.Coast);
+    wristMotor.setNeutralMode(NeutralMode.Brake);
     wristMotor.setInverted(true);
 
     clawMotor = new WPI_TalonSRX(9);
-    clawMotor.setNeutralMode(NeutralMode.Coast);
+    clawMotor.setNeutralMode(NeutralMode.Brake);
 
     armExtensionMotor = new WPI_TalonSRX(8);
-    armExtensionMotor.setNeutralMode(NeutralMode.Coast);
+    armExtensionMotor.setNeutralMode(NeutralMode.Brake);
     armExtensionMotor.setInverted(true);
-
-    drivetrainController = new CommandXboxController(0);
-    armController = new CommandXboxController(1);
 
     balancePID = new PIDController(0.03, 0.0, 0.0001);
 
     gyro = new Gyro();
 
     extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00007005);
-    /**
-     * up 90 degrees is 380 down 90 degrees is 900, original value for degrees per tick was -.3529
-     */
+    // up 90 degrees is 380 down 90 degrees is 900, original value for degrees per tick was -.3529
     final double wristDegreesPerTick = 180.0d / (380.0d - 900.0d);
     wristPitchEncoder =
         new SRXAnalogEncoderTalonSRX(wristMotor, wristZeroOffset, wristDegreesPerTick);
-    /** down 90 is 1.5 and striaght out (0 degrees) is .68 */
+    // down 90 is 1.5 and striaght out (0 degrees) is .68
     final double shoulderDegreesPerVolt = 90 / (shoulderNegative90Value - shoulderZero);
     shoulderPitchEncoder =
         new SparkMaxAnalogEncoder(shoulderMotor, shoulderZero, shoulderDegreesPerVolt);
@@ -140,11 +126,6 @@ public class RobotConfig implements IRobot {
   }
 
   @Override
-  public CommandXboxController getDrivetrainContoller() {
-    return drivetrainController;
-  }
-
-  @Override
   public PIDController getBalancePID() {
     return balancePID;
   }
@@ -162,26 +143,6 @@ public class RobotConfig implements IRobot {
   @Override
   public PitchEncoder getShoulderPitchEncoder() {
     return shoulderPitchEncoder;
-  }
-
-  @Override
-  public double getLeftXDeadband() {
-    return leftXDeadband;
-  }
-
-  @Override
-  public double getLeftYDeadband() {
-    return leftYDeadband;
-  }
-
-  @Override
-  public double getRightXDeadband() {
-    return rightXDeadband;
-  }
-
-  @Override
-  public double getRightYDeadband() {
-    return rightYDeadband;
   }
 
   @Override
@@ -215,55 +176,42 @@ public class RobotConfig implements IRobot {
   }
 
   @Override
-  public CommandXboxController getArmController() {
-    return armController;
-  }
-
-  @Override
   public double getMaxOffsetWristValue() {
-    // TODO Auto-generated method stub
     return maxWristOffsetValue;
   }
 
   @Override
   public double getMaxOffsetShoulderValue() {
-    // TODO Auto-generated method stub
     return maxShoulderOffsetValue;
   }
 
   @Override
   public double getTopShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return topShoulderSetpoint;
   }
 
   @Override
   public double getMiddleShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return middleShoulderSetpoint;
   }
 
   @Override
   public double getBottomShoulderSetpoint() {
-    // TODO Auto-generated method stub
     return bottomShoulderSetpoint;
   }
 
   @Override
   public double getTopExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return topExtensionSetpoint;
   }
 
   @Override
   public double getMiddleExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return middleExtensionSetpoint;
   }
 
   @Override
   public double getBottomExtensionSetpoint() {
-    // TODO Auto-generated method stub
     return bottomExtensionSetpoint;
   }
 }

@@ -73,11 +73,6 @@ public class PitchSubsystem extends SubsystemBase {
     return motorsEnabled;
   }
 
-  //  public void setdefaultCommand(Supplier<Double> wristPitch) {
-  //    setDefaultCommand(run(()-> wristPitchPIDCommand()));
-  ////    setDefaultCommand(run(() -> moveWristPitch(wristPitch.get())));
-  //  }
-
   @Override
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
@@ -88,11 +83,11 @@ public class PitchSubsystem extends SubsystemBase {
     builder.addDoubleProperty("directMotorOutput", this::getDirectMotorOutputTest, this::setDirectMotorOutputTest);
   }
 
-  public CommandBase pitchPIDCommand(DoubleSupplier setpointSupplier) {
+  public CommandBase pitchPIDCommand(String name, DoubleSupplier setpointSupplier) {
     final CommandBase command =
         new PIDCommand(pitchPID, pitchEncoder::getPitch, setpointSupplier, this::movePitch, this);
 
-    command.setName("PitchCommand");
+    command.setName(name);
     return command;
   }
   // jules waz here =)

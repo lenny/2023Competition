@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class ArmExtension extends SubsystemBase {
 
@@ -47,17 +46,13 @@ public class ArmExtension extends SubsystemBase {
         "distanceSetpoint", this::getPositionInchesSetpoint, this::setPositionInchesSetpoint);
   }
 
-  public void setdefaultCommand(Supplier<Double> extension) {
-    final Command command =
-        run(
-            () -> {
-              moveExtension(extension.get());
-            });
+  public void manualExtensionCommand(DoubleSupplier extension) {
+    final Command command = run(() -> moveExtension(extension.getAsDouble()));
     command.setName("ManualExtensionCommand");
     setDefaultCommand(command);
   }
 
-  public CommandBase extensionPIDCommand(DoubleSupplier setpointSupplier) {
+  public CommandBase extensionPIDCommand(String name, DoubleSupplier setpointSupplier) {
     final CommandBase command =
         new PIDCommand(
             extensionPID,
@@ -66,7 +61,7 @@ public class ArmExtension extends SubsystemBase {
             this::moveExtension,
             this);
 
-    command.setName("PIDExtensionCommand");
+    command.setName(name);
     return command;
   }
 
