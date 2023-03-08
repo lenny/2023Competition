@@ -34,31 +34,37 @@ public class RobotConfig implements IRobot {
   private final double leftYDeadband = .09;
   private final double rightXDeadband = .09;
   private final double rightYDeadband = .09;
-  private final double offsetWristValue = .1;
+
+  private final double maxShoulderOffsetValue = 20;
+  private static final double shoulderZero = 2.055;
+  private static final double shoulderNegative90Value = 2.7935;
+
+  private final double maxWristOffsetValue = 10;
+  private static final double wristZeroOffset = -635;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
     frontLeft = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    frontLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    frontLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
     frontLeft.setInverted(false);
 
     /* sets front right motor to CanSparkMax motor controller with device id 2 */
     frontRight = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    frontRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    frontRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
     frontRight.setInverted(true);
 
     /* sets rear left motor to CanSparkMax motor controller with device id 3 */
     rearLeft = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rearLeft.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rearLeft.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rearLeft.setInverted(false);
 
     /* sets rear right motor to CanSparkMax motor controller with device id 4 */
     rearRight = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-    rearRight.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rearRight.setIdleMode(CANSparkMax.IdleMode.kBrake);
     rearRight.setInverted(true);
 
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-    shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     shoulderMotor.setInverted(true);
 
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -71,6 +77,7 @@ public class RobotConfig implements IRobot {
 
     wristMotor = new WPI_TalonSRX(10);
     wristMotor.setNeutralMode(NeutralMode.Coast);
+    wristMotor.setInverted(true);
 
     clawMotor = new WPI_TalonSRX(9);
     clawMotor.setNeutralMode(NeutralMode.Coast);
@@ -87,10 +94,16 @@ public class RobotConfig implements IRobot {
     gyro = new Gyro();
 
     extensionEncoder = new SRXDistanceEncoder(armExtensionMotor, 0.00006104);
-    /** up 90 degrees is 380 down 90 degrees is 900 */
-    wristPitchEncoder = new SRXAnalogEncoderTalonSRX(wristMotor, 635, -.3529);
+    /**
+     * up 90 degrees is 380 down 90 degrees is 900, original value for degrees per tick was -.3529
+     */
+    final double wristDegreesPerTick = 180.0d / (380.0d - 900.0d);
+    wristPitchEncoder =
+        new SRXAnalogEncoderTalonSRX(wristMotor, wristZeroOffset, wristDegreesPerTick);
     /** down 90 is 1.5 and striaght out (0 degrees) is .68 */
-    shoulderPitchEncoder = new SparkMaxAnalogEncoder(shoulderMotor, .68, -109.75);
+    final double shoulderDegreesPerVolt = 90 / (shoulderNegative90Value - shoulderZero);
+    shoulderPitchEncoder =
+        new SparkMaxAnalogEncoder(shoulderMotor, shoulderZero, shoulderDegreesPerVolt);
   }
 
   @Override
@@ -198,9 +211,15 @@ public class RobotConfig implements IRobot {
     return armController;
   }
 
-@Override
-public double getOffsetWristValue() {
-	// TODO Auto-generated method stub
-	return offsetWristValue;
-}
+  @Override
+  public double getMaxOffsetWristValue() {
+    // TODO Auto-generated method stub
+    return maxWristOffsetValue;
+  }
+
+  @Override
+  public double getMaxOffsetShoulderValue() {
+    // TODO Auto-generated method stub
+    return maxShoulderOffsetValue;
+  }
 }

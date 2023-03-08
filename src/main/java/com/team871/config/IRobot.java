@@ -62,5 +62,7 @@ public interface IRobot {
 
   double getRightYDeadband();
 
-  double getOffsetWristValue();
+  double getMaxOffsetWristValue();
+
+  double getMaxOffsetShoulderValue();
 }

@@ -1,0 +1,40 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/ArmExtension": "Subsystem",
+      "/SmartDashboard/BalanceCommand": "Command",
+      "/SmartDashboard/BalancePID": "PIDController",
+      "/SmartDashboard/Claw": "Subsystem",
+      "/SmartDashboard/DisableMotorsCommand": "Command",
+      "/SmartDashboard/DriveTrain": "Subsystem",
+      "/SmartDashboard/EnableMotorsCommand": "Command",
+      "/SmartDashboard/ExtensionPIDCommand": "Command",
+      "/SmartDashboard/RotationPID": "PIDController",
+      "/SmartDashboard/Shoulder": "Subsystem",
+      "/SmartDashboard/Shoulder-DisableMotorsCommand": "Command",
+      "/SmartDashboard/Shoulder-EnableMotorsCommand": "Command",
+      "/SmartDashboard/Shoulder-PitchPID": "PIDController",
+      "/SmartDashboard/Wrist": "Subsystem",
+      "/SmartDashboard/Wrist-DisableMotorsCommand": "Command",
+      "/SmartDashboard/Wrist-EnableMotorsCommand": "Command",
+      "/SmartDashboard/Wrist-PitchPID": "PIDController",
+      "/SmartDashboard/driveDuration": "Command",
+      "/SmartDashboard/extensionPID": "PIDController",
+      "/SmartDashboard/resetGyro": "Command",
+      "/SmartDashboard/rotate": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Shoulder-PitchPID": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Wrist-PitchPID": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  }
+}

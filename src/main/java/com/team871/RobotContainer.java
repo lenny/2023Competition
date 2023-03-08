@@ -8,15 +8,16 @@ package com.team871;
 import com.team871.config.Gyro;
 import com.team871.config.IGyro;
 import com.team871.config.IRobot;
+import com.team871.config.PitchEncoder;
 import com.team871.config.RobotConfig;
-import com.team871.config.SimulationGyro;
 import com.team871.dashboard.DriveTrainExtensions;
+import com.team871.simulation.SimulationGyro;
+import com.team871.simulation.SimulationPitchEncoder;
 import com.team871.subsystems.ArmExtension;
 import com.team871.subsystems.Claw;
 import com.team871.subsystems.DriveTrain;
 import com.team871.subsystems.Intake;
-import com.team871.subsystems.Shoulder;
-import com.team871.subsystems.Wrist;
+import com.team871.subsystems.PitchSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -34,9 +35,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   private final DriveTrain drivetrain;
-  private final Shoulder shoulder;
+  private final PitchSubsystem shoulder;
   private final ArmExtension armExtension;
-  private final Wrist wrist;
+  private final PitchSubsystem wrist;
   private final Claw claw;
   private final Intake intake;
   private final IRobot config;
@@ -56,8 +57,17 @@ public class RobotContainer {
             config.getRearRightMotor(),
             gyro);
 
-    shoulder = new Shoulder(config.getShoulderMotor(), config.getShoulderPitchEncoder());
-    wrist = new Wrist(config.getWristMotor(), config.getWristPitchEncoder());
+    final PitchEncoder shoulderPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getShoulderPitchEncoder();
+
+    shoulder =
+        new PitchSubsystem(
+            config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder", 0.3, 1);
+
+    final PitchEncoder wristPitchEncoder =
+        RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
+
+    wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist", -1, 1);
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
 
@@ -98,7 +108,7 @@ public class RobotContainer {
     System.out.println("configure bindings");
 
     configureDrivetrainControllerBindings();
-    configureArmControllerBindings();
+    configureShoulderBindings();
     configureClawBindings();
     configureWristBindings();
     configureIntakeBindings();
@@ -106,32 +116,39 @@ public class RobotContainer {
   }
 
   private void configureClawBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     claw.setDefaultCommand(
-        () -> MathUtil.applyDeadband(controller.getLeftX(), config.getLeftXDeadband()));
+        () -> MathUtil.applyDeadband(controller.getLeftTriggerAxis(), config.getLeftXDeadband()));
   }
 
   private void configureWristBindings() {
     final CommandXboxController controller = config.getArmController();
 
     wrist.setDefaultCommand(
-        wrist.wristPitchPIDCommand(() -> {
-          final double targetPosition = config.getShoulderPitchEncoder().getPitch();
-          final double offsetValue = (MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()))*(config.getOffsetWristValue());
-          return targetPosition + offsetValue;
-        }));
-    //        () -> MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()));
-
-    //    controller.y().whileTrue(wrist.wristPitchPIDCommand(() ->
-    // config.getShoulderPitchEncoder().getPitch() + controller.g));
+        wrist.pitchPIDCommand(
+            () -> {
+              final double targetPosition = config.getShoulderPitchEncoder().getPitch();
+              final double offsetValue =
+                  (MathUtil.applyDeadband(controller.getRightY(), config.getRightYDeadband()))
+                      * (config.getMaxOffsetWristValue());
+              return targetPosition * -1 + offsetValue;
+            }));
   }
 
-  private void configureArmControllerBindings() {
+  private void configureShoulderBindings() {
     final CommandXboxController controller = config.getArmController();
 
-    shoulder.setdefaultCommand(
-        () -> MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()));
+    shoulder.setDefaultCommand(
+        shoulder.pitchPIDCommand(
+            () -> {
+              final double targetPosition = config.getShoulderPitchEncoder().getPitch();
+              //       return (targetPosition * 45) + 70;
+              final double offsetValue =
+                  (MathUtil.applyDeadband(controller.getLeftY(), config.getLeftYDeadband()))
+                      * (config.getMaxOffsetShoulderValue());
+              return targetPosition + offsetValue;
+            }));
   }
 
   private void configureArmExtensionBindings() {
@@ -144,7 +161,7 @@ public class RobotContainer {
   }
 
   private void configureIntakeBindings() {
-    final CommandXboxController controller = config.getArmController();
+    final CommandXboxController controller = config.getDrivetrainContoller();
 
     controller.rightBumper().whileTrue(intake.run(intake::pullIn));
     controller.leftBumper().whileTrue(intake.run(intake::pullOut));
