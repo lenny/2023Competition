@@ -64,4 +64,10 @@ public interface IRobot {
   double getMiddleExtensionSetpoint();
 
   double getBottomExtensionSetpoint();
+
+  double getRestOnFrameSetpoint();
+
+  double getShoulderLowClampValue();
+
+  double getShoulderHighClampValue();
 }

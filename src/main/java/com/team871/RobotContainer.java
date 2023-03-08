@@ -60,13 +60,23 @@ public class RobotContainer {
     // -90 is fully up, 0 is parallel to the ground, 90 is fully down. Down is negative motor output
     shoulder =
         new PitchSubsystem(
-            config.getShoulderMotor(), shoulderPitchEncoder, 0.032, 0, 0, "Shoulder", 0.3, 1);
+            config.getShoulderMotor(),
+            shoulderPitchEncoder,
+            0.032,
+            0,
+            0,
+            config.getShoulderLowClampValue(),
+            config.getShoulderHighClampValue(),
+            "Shoulder");
 
     final PitchEncoder wristPitchEncoder =
         RobotBase.isSimulation() ? new SimulationPitchEncoder() : config.getWristPitchEncoder();
 
-    // 90 is fully up, 0 is parallel to the ground, -90 is fully down. Down is positive motor output
-    wrist = new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, "Wrist", -1, 1);
+    /**
+     * 90 is fully up, 0 is parallel to the ground, -90 is fully down. Down is positive motor output
+     */
+    wrist =
+        new PitchSubsystem(config.getWristMotor(), wristPitchEncoder, 0.048, 0, 0, -1, 1, "Wrist");
     claw = new Claw(config.getClawMotor());
     intake = new Intake(config.getLeftIntakeMotor(), config.getRightIntakeMotor());
     armExtension = new ArmExtension(config.getArmExtensionMotor(), config.getExtensionEncoder());
@@ -124,7 +134,7 @@ public class RobotContainer {
   private void configureShoulderBindings() {
     shoulder.setDefaultCommand(
         shoulder.pitchPIDCommand("PickUp",
-            () -> (controlConfig.getShoulderAxisValue() * 45) + 62));
+            () -> (controlConfig.getShoulderAxisValue() * 45) + config.getRestOnFrameSetpoint()));
 
     controlConfig.getHighNodeTrigger().toggleOnTrue(shoulder.pitchPIDCommand("HighNode",
       () -> {
@@ -133,14 +143,18 @@ public class RobotContainer {
         return targetPosition + offsetValue;
       }));
 
-    controlConfig.getMiddleNodeTrigger().toggleOnTrue(shoulder.pitchPIDCommand("MiddleNode",
+    controlConfig.getMiddleNodeTrigger()
+        .toggleOnTrue(
+            shoulder.pitchPIDCommand("MiddleNode",
       () -> {
         final double targetPosition = config.getMiddleShoulderSetpoint();
         final double offsetValue = controlConfig.getShoulderAxisValue() * config.getMaxOffsetShoulderValue();
         return targetPosition + offsetValue;
       }));
 
-    controlConfig.getBottomNodeTrigger().toggleOnTrue(shoulder.pitchPIDCommand("Bottom",
+    controlConfig.getBottomNodeTrigger()
+        .toggleOnTrue(
+            shoulder.pitchPIDCommand("Bottom",
       () -> {
         final double targetPosition = config.getBottomShoulderSetpoint();
         final double offsetValue = controlConfig.getShoulderAxisValue() * config.getMaxOffsetShoulderValue();
@@ -150,9 +164,18 @@ public class RobotContainer {
 
   private void configureArmExtensionBindings() {
     armExtension.manualExtensionCommand(controlConfig::getExtensionAxisValue);
-    controlConfig.getHighNodeTrigger().toggleOnTrue(armExtension.extensionPIDCommand("TopNode", config::getTopExtensionSetpoint));
-    controlConfig.getMiddleNodeTrigger().toggleOnTrue(armExtension.extensionPIDCommand("MiddleNode", config::getMiddleExtensionSetpoint));
-    controlConfig.getBottomNodeTrigger().toggleOnTrue(armExtension.extensionPIDCommand("BottomNode", config::getBottomExtensionSetpoint));
+    controlConfig.getHighNodeTrigger()
+        .toggleOnTrue(
+            armExtension.extensionPIDCommand(
+                "TopNode", config::getTopExtensionSetpoint));
+    controlConfig.getMiddleNodeTrigger()
+        .toggleOnTrue(
+            armExtension.extensionPIDCommand(
+                "MiddleNode", config::getMiddleExtensionSetpoint));
+    controlConfig.getBottomNodeTrigger()
+        .toggleOnTrue(
+            armExtension.extensionPIDCommand(
+                "BottomNode", config::getBottomExtensionSetpoint));
   }
 
   private void configureIntakeBindings() {

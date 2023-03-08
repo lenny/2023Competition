@@ -1,5 +1,7 @@
 package com.team871.config;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
@@ -34,12 +36,18 @@ public class RobotConfig implements IRobot {
   private static final double wristZeroOffset = -635;
 
   private static final double topShoulderSetpoint = -2.7;
-  private static final double middleShoulderSetpoint = 16.2;
+  /** formerly 16.2 */
+  private static final double middleShoulderSetpoint = 20.2;
+  /** formerly 62 */
   private static final double bottomShoulderSetpoint = 62;
+
   private static final double topExtensionSetpoint = 19;
   private static final double middleExtensionSetpoint = 4.63;
   private static final double bottomExtensionSetpoint = 15.274;
-  
+  private static final double restOnFrameSetpoint = 62;
+
+  private static final double lowClamp = .05;
+  private static final double highClamp = -1;
 
   public RobotConfig() {
     /* sets front left motor to CanSparkMax motor controller with device id 1 */
@@ -65,7 +73,7 @@ public class RobotConfig implements IRobot {
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     shoulderMotor.setInverted(true);
-
+    /** TODO set limit switches */
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     leftIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     leftIntakeMotor.setInverted(true);
@@ -84,6 +92,11 @@ public class RobotConfig implements IRobot {
     armExtensionMotor = new WPI_TalonSRX(8);
     armExtensionMotor.setNeutralMode(NeutralMode.Brake);
     armExtensionMotor.setInverted(true);
+    armExtensionMotor.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configClearPositionOnLimitR(true, 0);
 
     balancePID = new PIDController(0.03, 0.0, 0.0001);
 
@@ -213,5 +226,20 @@ public class RobotConfig implements IRobot {
   @Override
   public double getBottomExtensionSetpoint() {
     return bottomExtensionSetpoint;
+  }
+
+  @Override
+  public double getShoulderLowClampValue() {
+    return lowClamp;
+  }
+
+  @Override
+  public double getShoulderHighClampValue() {
+    return highClamp;
+  }
+
+  @Override
+  public double getRestOnFrameSetpoint() {
+    return restOnFrameSetpoint;
   }
 }

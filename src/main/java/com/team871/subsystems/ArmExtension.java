@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import java.util.function.DoubleSupplier;
 
 public class ArmExtension extends SubsystemBase {
@@ -30,12 +29,34 @@ public class ArmExtension extends SubsystemBase {
     SmartDashboard.putData("extensionPID", extensionPID);
     // SmartDashboard.putData("ExtensionPIDCommand", extensionPIDCommand());
     SmartDashboard.putData("extensionEncoder", distanceEncoder);
-    SmartDashboard.putData("resetCommand",resetExtensionEncoderCommand());
+    SmartDashboard.putData("resetCommand", resetExtensionEncoderCommand());
+    SmartDashboard.putData(
+        "extensionCommand", extensionPIDCommand(() -> getPositionInchesSetpoint()));
   }
 
+  public static double safetyRampRetract(double rawInput, double currentDistance) {
+    /** negative output is retracting, so we have to use biggest number not smallest */
+    double maxoutput = Math.max(currentDistance / 3, .3);
+    return Math.max(-maxoutput, rawInput);
+  }
+
+  public static double safetyRampExtend(double rawInput, double currentDistance) {
+    double maxoutput = Math.max(16 / currentDistance, .3);
+    return Math.min(maxoutput, rawInput);
+  }
+
+  /**
+   * @param output retract is negative, extend is positive, output between -1 and 1
+   */
   public void moveExtension(final double output) {
-    SmartDashboard.putNumber("extensionMotorOutput", output);
-    extensionMotor.set(output);
+    double adjustedOuputRetract = safetyRampRetract(output, distanceEncoder.getDistance());
+    double adjustedOuputExtend = safetyRampExtend(output, distanceEncoder.getDistance());
+    SmartDashboard.putNumber("extensionMotorOutput", adjustedOuputExtend);
+    if (output < 0) {
+      extensionMotor.set(adjustedOuputRetract);
+    } else {
+      extensionMotor.set(adjustedOuputExtend);
+    }
   }
 
   @Override
