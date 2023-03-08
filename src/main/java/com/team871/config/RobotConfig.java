@@ -82,8 +82,7 @@ public class RobotConfig implements IRobot {
     shoulderMotor = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     shoulderMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     shoulderMotor.setInverted(true);
-    /**TODO set limit switches */
-
+    /** TODO set limit switches */
     leftIntakeMotor = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     leftIntakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     leftIntakeMotor.setInverted(true);
@@ -102,8 +101,10 @@ public class RobotConfig implements IRobot {
     armExtensionMotor = new WPI_TalonSRX(8);
     armExtensionMotor.setNeutralMode(NeutralMode.Brake);
     armExtensionMotor.setInverted(true);
-    armExtensionMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-    armExtensionMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    armExtensionMotor.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
     armExtensionMotor.configClearPositionOnLimitR(true, 0);
     drivetrainController = new CommandXboxController(0);
     armController = new CommandXboxController(1);
@@ -284,5 +285,4 @@ public class RobotConfig implements IRobot {
   public double getRestOnFrameSetpoint() {
     return restOnFrameSetpoint;
   }
-
 }
