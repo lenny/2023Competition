@@ -63,7 +63,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("mecanumY", yValue);
     SmartDashboard.putNumber("mecanumZ", zValue);
     if (motorsEnabled) {
-      mecanum.driveCartesian(xValue, yValue, zValue);
+      mecanum.driveCartesian(xValue, yValue, zValue * .35);
     } else {
       mecanum.driveCartesian(0, 0, 0);
     }
@@ -74,13 +74,26 @@ public class DriveTrain extends SubsystemBase {
         run(
             () -> {
               driveMecanum(
-                  -xboxController.getLeftY(),
-                  xboxController.getLeftX(),
-                  xboxController.getRightX());
+                  exponentialDrive(-xboxController.getLeftY()),
+                  exponentialDrive(xboxController.getLeftX()),
+                  exponentialDrive(xboxController.getRightX()));
             });
 
     defaultCommand.setName("DriveMechanumCommand");
     return defaultCommand;
+  }
+
+  public double exponentialDrive(double controllerOutput) {
+    double contollerOutputA = 10;
+    double controllerOutputB = 0.015;
+    double controllerOutputC = (1-controllerOutputB)/(contollerOutputA-1);
+    double wrappedControllerOutput =
+        controllerOutputC* Math.pow(contollerOutputA, Math.abs(controllerOutput)) - controllerOutputC + controllerOutputB * Math.abs(controllerOutput);
+    if (controllerOutput >= 0) {
+      return wrappedControllerOutput;
+    } else {
+      return -wrappedControllerOutput;
+    }
   }
 
   public CommandBase balanceCommand() {
