@@ -1,6 +1,6 @@
 package com.team871.config;
 
-import com.team871.controller.CommandX56HotasController;
+import com.team871.controller.CommandX56HotasThrottle;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -15,11 +15,11 @@ public class XboxHotasControlConfig implements IControlConfig {
     private static final double TRIGGER_DEADBAND = 0.01;
 
     private final CommandXboxController driveController;
-    private final CommandX56HotasController systemController;
+    private final CommandX56HotasThrottle systemController;
 
     public XboxHotasControlConfig() {
         driveController = new CommandXboxController(0);
-        systemController = new CommandX56HotasController(1);
+        systemController = new CommandX56HotasThrottle(1);
     }
 
     @Override

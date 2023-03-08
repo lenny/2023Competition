@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public class CommandX56HotasController {
+public class CommandX56HotasThrottle {
     // Axes
     private static final int LEFT_THROTTLE_AXIS = 0;
     private static final int RIGHT_THROTTLE_AXIS = 1;
@@ -29,7 +29,7 @@ public class CommandX56HotasController {
 
     private final GenericHID hid;
 
-    public CommandX56HotasController(final int port) {
+    public CommandX56HotasThrottle(final int port) {
         this.hid = new GenericHID(port);
     }
 
