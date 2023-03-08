@@ -31,7 +31,7 @@ public class ArmExtension extends SubsystemBase {
     SmartDashboard.putData("extensionEncoder", distanceEncoder);
     SmartDashboard.putData("resetCommand", resetExtensionEncoderCommand());
     SmartDashboard.putData(
-        "extensionCommand", extensionPIDCommand(() -> getPositionInchesSetpoint()));
+        "extensionCommand", extensionPIDCommand("ManualExtend", this::getPositionInchesSetpoint));
   }
 
   public static double safetyRampRetract(double rawInput, double currentDistance) {

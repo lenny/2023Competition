@@ -38,7 +38,7 @@ public class PitchSubsystem extends SubsystemBase {
       final double lowClamp,
       final double highClamp,
       final String subsystemName) {
-    this.wristMotor = motor;
+    this.motor = motor;
     this.pitchPID = new PIDController(kp, ki, kd);
     this.pitchEncoder = pitchEncoder;
     this.subsystemName = subsystemName;
@@ -54,8 +54,8 @@ public class PitchSubsystem extends SubsystemBase {
     double clampedOutput = MathUtil.clamp(output, lowClamp, highClamp);
     // double clampedOutput = output;
     if (motorsEnabled) {
-      // wristMotor.set(output);
-      wristMotor.set(clampedOutput);
+      // motor.set(output);
+      motor.set(clampedOutput);
     } else {
       motor.set(0);
     }
@@ -73,7 +73,6 @@ public class PitchSubsystem extends SubsystemBase {
     builder.addDoubleProperty(
         "ThetaSetpoint", this::getPositionThetaSetpointTest, this::setPositionThetaSetpointTest);
     builder.addBooleanProperty("motorsEnabled", this::getMotorsEnabled, this::setMotorsEnabled);
-    builder.addDoubleProperty("directMotorOutput", this::getDirectMotorOutputTest, this::setDirectMotorOutputTest);
   }
 
   public CommandBase pitchPIDCommand(String name, DoubleSupplier setpointSupplier) {
@@ -98,9 +97,5 @@ public class PitchSubsystem extends SubsystemBase {
 
   public CommandBase enableMotors() {
     return runOnce(() -> motorsEnabled = true);
-  }
-
-  public CommandBase setOutputTest() {
-    return run(()-> this.motor.set(directMotorOutputTest));
   }
 }
